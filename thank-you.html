@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تم تأكيد موعدك بنجاح 🎉 | نجاح ميديا</title>
+  <meta name="description" content="تم حجز جلسة العمل التشخيصية لمركز اللغات ديالك. سنتواصل معك عبر الواتساب في أقل من 30 دقيقة.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Alexandria:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Meta Pixel Tracking: Schedule Event -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'FB_PIXEL_ID_PLACEHOLDER');
+    fbq('track', 'PageView');
+    
+    // Fire Meta Pixel Schedule event
+    fbq('track', 'Schedule', {
+      content_name: 'Consultation Diagnostic 20min',
+      status: 'confirmed'
+    });
+    console.log('[Meta Pixel] Schedule Event Triggered Successfully');
+  </script>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- MAIN ELEVATED CARD -->
+    <main class="main-card thankyou-card">
+
+      <!-- Success Icon -->
+      <div class="success-check-bubble">
+        <span>✓</span>
+      </div>
+
+      <!-- Confirmation Title -->
+      <h1 class="thankyou-title">
+        تم تأكيد موعد الاستشارة ديالك بنجاح 🎉
+      </h1>
+
+      <!-- Sub-text -->
+      <p class="thankyou-subtext">
+        غادي نتواصلو معاك فالواتساب فـ أقل من 30 دقيقة باش نأكدو الرابط والمعلومات الخاصة بالمركز ديالك.
+      </p>
+
+      <!-- Appointment Summary Card -->
+      <div class="appointment-details-card">
+        <div class="details-header">
+          <span>📋</span>
+          <span>معلومات الجلسة المحجوزة:</span>
+        </div>
+
+        <div class="details-row">
+          <span class="details-label">اسم المسؤول:</span>
+          <span class="details-val" id="displayFullName">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
+          <span class="details-label">المدينة:</span>
+          <span class="details-val" id="displayCity">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
+          <span class="details-label">اسم مركز اللغات:</span>
+          <span class="details-val" id="displayCenterName">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
+          <span class="details-label">اليوم المحدد:</span>
+          <span class="details-val" id="displayDate" style="color: var(--emerald-primary);">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
+          <span class="details-label">التوقيت المختار:</span>
+          <span class="details-val" id="displayTime" style="color: var(--emerald-primary);">جاري التحميل...</span>
+        </div>
+      </div>
+
+      <!-- Preparation Checklist -->
+      <div class="checklist-section">
+        <h3 class="checklist-title">
+          <span>📌</span>
+          <span>باش تستافد 100% من هاد الجلسة ديال 20 دقيقة:</span>
+        </h3>
+        
+        <div class="checklist-item">
+          <span class="checklist-check">✓</span>
+          <span><strong>حدد اللغات المستهدفة:</strong> واش الألمانية (Ausbildung / Niveau B1/B2)، الفرنسية (TCF/TEF)، أو الإنجليزية.</span>
+        </div>
+
+        <div class="checklist-item">
+          <span class="checklist-check">✓</span>
+          <span><strong>وجد أرقام المركز:</strong> شحال كتحط فالمعدل فالسبونسور وشحال من مقعد محتاج تعمر هاد الشهر باش تضمن الربحية.</span>
+        </div>
+
+        <div class="checklist-item">
+          <span class="checklist-check">✓</span>
+          <span><strong>تأكد من تطبيق الواتساب:</strong> المستشار غادي يشارك معاك رابط المكالمة وملف دراسة الحالة مباشرة تما.</span>
+        </div>
+      </div>
+
+      <!-- Return link -->
+      <div style="margin-top: 24px;">
+        <a href="index.html" style="color: var(--text-muted); font-size: 0.88rem; text-decoration: none;">
+          ← الرجوع إلى الصفحة الرئيسية
+        </a>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let booking = {};
+      
+      try {
+        // Read strictly from 'prospectBooking' in localStorage
+        const stored = localStorage.getItem('prospectBooking') || sessionStorage.getItem('najah_current_lead') || localStorage.getItem('najah_last_booking');
+        if (stored) {
+          booking = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Storage parsing error:', e);
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const name = booking.fullName || urlParams.get('name') || 'المدير المحترم';
+      const center = booking.centerName || urlParams.get('center') || 'مركز اللغات';
+      const city = booking.city || urlParams.get('city') || 'المدينة';
+      const date = booking.selectedDate || urlParams.get('date') || 'اليوم';
+      const time = booking.selectedTime || urlParams.get('time') || 'التوقيت المختار';
+
+      document.getElementById('displayFullName').textContent = name;
+      document.getElementById('displayCenterName').textContent = center;
+      document.getElementById('displayCity').textContent = city;
+      document.getElementById('displayDate').textContent = date;
+      document.getElementById('displayTime').textContent = time;
+    });
+  </script>
+</body>
+</html>
