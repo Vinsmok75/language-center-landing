@@ -425,7 +425,6 @@ function initFormHandler() {
     localStorage.setItem('najah_last_booking', JSON.stringify(payload));
     sessionStorage.setItem('najah_current_lead', JSON.stringify(payload));
 
-
     // Send data using text/plain to prevent CORS preflight block, with 800ms safety timeout fallback
     const fetchPromise = fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
