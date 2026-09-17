@@ -1,0 +1,21 @@
+# ----------------------------------------------------------------------
+# Clean URLs (Hide .html Extension & SEO Redirects)
+# ----------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Redirect /index.html to root / (e.g. yoursite.com/index.html -> yoursite.com/)
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/index\.html [NC]
+  RewriteRule ^index\.html$ / [R=301,L]
+
+  # 2. Redirect /page.html to /page (e.g. yoursite.com/thank-you.html -> yoursite.com/thank-you)
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/([^.]+)\.html [NC]
+  RewriteRule ^ /%1 [R=301,L]
+
+  # 3. Internally rewrite /page to /page.html without changing URL bar
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^([^/]+)/?$ $1.html [L]
+</IfModule>

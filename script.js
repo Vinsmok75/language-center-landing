@@ -442,7 +442,8 @@ function initFormHandler() {
       console.warn('Google Script fetch warning:', err);
     }
 
-    // Execute redirect after fetch settles or timeout completes
-    window.location.href = "thank-you.html";
+    // Redirect cleanly without .html extension (preserves file:// compatibility for local testing)
+    const targetUrl = window.location.protocol === 'file:' ? 'thank-you.html' : 'thank-you';
+    window.location.href = targetUrl;
   });
 }
