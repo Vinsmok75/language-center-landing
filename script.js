@@ -106,15 +106,60 @@ function initInteractiveScheduler() {
     });
   }
 
-  // Active Selected Day (Defaults to Day 0: اليوم)
-  let currentSelectedDay = scheduleDays[0];
+  // 2. TIME SLOTS DEFINITION
+  // Morning slots: 10:00, 11:00, 12:00 (locked on Sunday)
+  // Afternoon/Evening slots: 15:00, 15:50, 17:20, 18:10
+  const timeSlots = [
+    '10:00',
+    '11:00',
+    '12:00',
+    '15:00',
+    '15:50',
+    '17:20',
+    '18:10'
+  ];
+
+  const sundayMorningSlots = ['10:00', '11:00', '12:00'];
+
+  // Helper: Check if slot has already passed in real-time
+  function isSlotInPast(dayItem, timeStr) {
+    if (!dayItem || !dayItem.isoDate || !timeStr) return false;
+
+    // Only Day 0 (today) or past days can have expired slots
+    if (dayItem.index > 0) return false;
+
+    const now = new Date();
+    const [year, month, day] = dayItem.isoDate.split('-').map(Number);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+
+    const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    return slotDate <= now;
+  }
+
+  // Helper: Check if a day has at least one selectable upcoming slot
+  function hasDayAvailableSlots(dayItem) {
+    if (!dayItem || !dayItem.isAvailable) return false;
+    return timeSlots.some((t) => {
+      const locked = dayItem.isSunday && sundayMorningSlots.includes(t);
+      const booked = isSlotBooked(dayItem, t, bookedSlotsCache);
+      const past = isSlotInPast(dayItem, t);
+      return !locked && !booked && !past;
+    });
+  }
+
+  // Active Selected Day:
+  // If Day 0 (اليوم) has available slots remaining, select Day 0.
+  // If all slots today have already passed or are full, automatically default to Day 1 (غداً).
+  const todayHasSlots = hasDayAvailableSlots(scheduleDays[0]);
+  let currentSelectedDay = todayHasSlots ? scheduleDays[0] : scheduleDays[1];
   selectedDateInput.value = currentSelectedDay.fullLabel;
 
   // Render Day Cards
   daysCardsGrid.innerHTML = '';
-  scheduleDays.forEach((dayItem, idx) => {
+  scheduleDays.forEach((dayItem) => {
+    const isInitiallyActive = (dayItem === currentSelectedDay);
     const card = document.createElement('div');
-    card.className = `day-card ${idx === 0 ? 'active' : ''} ${!dayItem.isAvailable ? 'disabled' : ''}`;
+    card.className = `day-card ${isInitiallyActive ? 'active' : ''} ${!dayItem.isAvailable ? 'disabled' : ''}`;
     card.setAttribute('data-full-date', dayItem.fullLabel);
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', dayItem.isAvailable ? '0' : '-1');
@@ -134,7 +179,7 @@ function initInteractiveScheduler() {
         currentSelectedDay = dayItem;
         selectedDateInput.value = dayItem.fullLabel;
 
-        // Re-render time slots reflecting Sunday lockout and booked slots for this day
+        // Re-render time slots reflecting Sunday lockout, past slots, and booked slots for this day
         renderTimeSlots();
 
         // Refresh bookings from Google Sheet asynchronously
@@ -144,21 +189,6 @@ function initInteractiveScheduler() {
 
     daysCardsGrid.appendChild(card);
   });
-
-  // 2. TIME SLOTS DEFINITION
-  // Morning slots: 10:00, 11:00, 12:00 (locked on Sunday)
-  // Afternoon/Evening slots: 15:00, 15:50, 17:20, 18:10
-  const timeSlots = [
-    '10:00',
-    '11:00',
-    '12:00',
-    '15:00',
-    '15:50',
-    '17:20',
-    '18:10'
-  ];
-
-  const sundayMorningSlots = ['10:00', '11:00', '12:00'];
 
   // Helper: Conflict matching against Google Sheet booked slots
   function isSlotBooked(dayItem, timeStr, bookedSlots) {
@@ -204,7 +234,7 @@ function initInteractiveScheduler() {
     });
   }
 
-  // 3. RENDER TIME CHIPS WITH SUNDAY LOCKOUT & CONFLICT DETECTION
+  // 3. RENDER TIME CHIPS WITH SUNDAY LOCKOUT, PAST TIME LOCKOUT & CONFLICT DETECTION
   function renderTimeSlots() {
     timeChipsGrid.innerHTML = '';
     const isSunday = currentSelectedDay.isSunday;
@@ -216,6 +246,7 @@ function initInteractiveScheduler() {
 
       const isSundayMorningLocked = isSunday && sundayMorningSlots.includes(timeStr);
       const isBooked = isSlotBooked(currentSelectedDay, timeStr, bookedSlotsCache);
+      const isPast = isSlotInPast(currentSelectedDay, timeStr);
 
       if (isSundayMorningLocked) {
         // Business Rule 1: Sunday Morning Lockout
@@ -227,12 +258,12 @@ function initInteractiveScheduler() {
           <span class="time-main-text">${timeStr}</span>
           <span class="time-tag-badge badge-unavailable">غير متاح</span>
         `;
-      } else if (isBooked) {
-        // Business Rule 2: Dynamic Conflict Detection (Already Booked)
+      } else if (isBooked || isPast) {
+        // Business Rule 2: Dynamic Conflict Detection OR Past Expired Slot (Appears already full)
         chip.className = 'time-chip-btn is-booked';
         chip.disabled = true;
         chip.setAttribute('aria-disabled', 'true');
-        chip.setAttribute('title', 'هذا التوقيت محجوز مسبقاً');
+        chip.setAttribute('title', isBooked ? 'هذا التوقيت محجوز مسبقاً' : 'هذا التوقيت ممتلئ / انقضى');
         chip.innerHTML = `
           <span class="time-main-text">${timeStr}</span>
           <span class="time-tag-badge badge-booked">محجوز / ممتلئ</span>
@@ -255,19 +286,21 @@ function initInteractiveScheduler() {
     });
 
     // Auto-Selection Logic:
-    // If the current selected time is either locked (Sunday morning) or already booked,
+    // If the current selected time is locked (Sunday morning), already booked, or already passed,
     // automatically fallback to the first available slot for this day.
     const currentVal = selectedTimeInput.value;
     const isCurrentValSundayLocked = isSunday && sundayMorningSlots.includes(currentVal);
     const isCurrentValBooked = isSlotBooked(currentSelectedDay, currentVal, bookedSlotsCache);
+    const isCurrentValPast = isSlotInPast(currentSelectedDay, currentVal);
 
     let finalSelectedTime = currentVal;
 
-    if (!finalSelectedTime || isCurrentValSundayLocked || isCurrentValBooked) {
-      const firstAvailable = timeSlots.find(t => {
+    if (!finalSelectedTime || isCurrentValSundayLocked || isCurrentValBooked || isCurrentValPast) {
+      const firstAvailable = timeSlots.find((t) => {
         const locked = isSunday && sundayMorningSlots.includes(t);
         const booked = isSlotBooked(currentSelectedDay, t, bookedSlotsCache);
-        return !locked && !booked;
+        const past = isSlotInPast(currentSelectedDay, t);
+        return !locked && !booked && !past;
       });
 
       finalSelectedTime = firstAvailable || '';
@@ -292,7 +325,7 @@ function initInteractiveScheduler() {
     if (selectedTimeInput.value) {
       selectedSlotPreview.textContent = `${selectedDateInput.value} • على الساعة ${selectedTimeInput.value}`;
     } else {
-      selectedSlotPreview.textContent = `${selectedDateInput.value} • (يرجى اختيار توقيت متاح)`;
+      selectedSlotPreview.textContent = `${selectedDateInput.value} • (جميع المواعيد ممتلئة لهذا اليوم، يرجى اختيار يوم آخر)`;
     }
   }
 
@@ -345,9 +378,21 @@ function initInteractiveScheduler() {
     }
   }
 
-  // Initial render with default slot (e.g. 15:00)
-  selectedTimeInput.value = currentSelectedDay.isSunday ? '15:00' : '15:00';
+  // Initial render: automatically select first available upcoming slot
+  selectedTimeInput.value = '';
   renderTimeSlots();
+
+  // Periodically check every minute to dynamically mark passing slots as full
+  setInterval(() => {
+    renderTimeSlots();
+  }, 60000);
+
+  // Re-check when window/tab is refocused
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      renderTimeSlots();
+    }
+  });
 
   // Trigger real-time sync on load
   fetchBookedSlots();
@@ -391,6 +436,17 @@ function initFormHandler() {
     if (isSundaySelected && sundayMorningSlots.includes(selectedTime)) {
       alert('فترة الصباح ليوم الأحد غير متاحة. المرجو اختيار توقيت بعد الزوال (ابتداءً من 15:00).');
       return;
+    }
+
+    // Prevent booking slots that have already expired/passed
+    if (selectedDate.includes('اليوم')) {
+      const now = new Date();
+      const [slotH, slotM] = selectedTime.split(':').map(Number);
+      const slotDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), slotH, slotM, 0, 0);
+      if (slotDate <= now) {
+        alert('هذا التوقيت قد انقضى بالفعل. المرجو اختيار توقيت متاح أو حجز موعد ليوم غد.');
+        return;
+      }
     }
 
     // Disable submit button and update status text
