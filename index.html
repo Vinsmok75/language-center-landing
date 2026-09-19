@@ -200,22 +200,40 @@
                   >
                 </div>
 
-                <!-- Input 2: City (<select> dropdown) -->
-                <div class="form-group">
-                  <label class="form-label" for="citySelect">
-                    <span>المدينة</span>
-                    <span class="required-star">*</span>
-                  </label>
-                  <select id="citySelect" name="city" class="form-select" required>
-                    <option value="" disabled selected>اختر المدينة...</option>
-                    <option value="فاس (Fès)">فاس (Fès)</option>
-                    <option value="مكناس (Meknès)">مكناس (Meknès)</option>
-                    <option value="الرباط (Rabat)">الرباط (Rabat)</option>
-                    <option value="الدار البيضاء (Casablanca)">الدار البيضاء (Casablanca)</option>
-                    <option value="طنجة (Tanger)">طنجة (Tanger)</option>
-                    <option value="مراكش (Marrakech)">مراكش (Marrakech)</option>
-                    <option value="مدينة أخرى (Autre)">مدينة أخرى (Autre)</option>
-                  </select>
+                <!-- Row: City & Formation Type -->
+                <div class="form-row">
+                  <!-- Input 2: City (<select> dropdown) -->
+                  <div class="form-group">
+                    <label class="form-label" for="citySelect">
+                      <span>المدينة</span>
+                      <span class="required-star">*</span>
+                    </label>
+                    <select id="citySelect" name="city" class="form-select" required>
+                      <option value="" disabled selected>اختر المدينة...</option>
+                      <option value="فاس (Fès)">فاس (Fès)</option>
+                      <option value="مكناس (Meknès)">مكناس (Meknès)</option>
+                      <option value="الرباط (Rabat)">الرباط (Rabat)</option>
+                      <option value="الدار البيضاء (Casablanca)">الدار البيضاء (Casablanca)</option>
+                      <option value="طنجة (Tanger)">طنجة (Tanger)</option>
+                      <option value="مراكش (Marrakech)">مراكش (Marrakech)</option>
+                      <option value="مدينة أخرى (Autre)">مدينة أخرى (Autre)</option>
+                    </select>
+                  </div>
+
+                  <!-- Input 3: Formation Type (<select> dropdown) -->
+                  <div class="form-group">
+                    <label class="form-label" for="formationType">
+                      <span>نوع التكوين / المركز</span>
+                      <span class="required-star">*</span>
+                    </label>
+                    <select id="formationType" name="formation_type" class="form-select" required>
+                      <option value="" disabled selected>اختر نوع التكوين...</option>
+                      <option value="مركز لغات حضوري (Présentiel)">مركز لغات حضوري (Présentiel)</option>
+                      <option value="تكوين عن بعد أونلاين (En ligne)">تكوين عن بعد أونلاين (En ligne)</option>
+                      <option value="حضوري وعن بعد معاً (Présentiel & En ligne)">حضوري وعن بعد معاً (Présentiel & En ligne)</option>
+                      <option value="مركز تكوين مهني (Centre de formation)">مركز تكوين مهني (Centre de formation)</option>
+                    </select>
+                  </div>
                 </div>
 
                 <!-- Input 3: Center Name -->

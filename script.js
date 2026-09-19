@@ -409,13 +409,15 @@ function initFormHandler() {
     // Collect inputs
     const fullName = document.getElementById('fullName').value.trim();
     const city = document.getElementById('citySelect').value.trim();
+    const formationTypeElem = document.getElementById('formationType');
+    const formationType = formationTypeElem ? formationTypeElem.value.trim() : '';
     const centerName = document.getElementById('centerName').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const selectedDate = document.getElementById('selectedDateInput').value;
     const selectedTime = document.getElementById('selectedTimeInput').value;
 
-    if (!fullName || !city || !centerName || !phone) {
-      alert('المرجو ملء جميع الخانات المطلوبة بما فيها المدينة واسم المركز.');
+    if (!fullName || !city || !formationType || !centerName || !phone) {
+      alert('المرجو ملء جميع الخانات المطلوبة بما فيها المدينة، نوع التكوين واسم المركز.');
       return;
     }
 
@@ -464,6 +466,7 @@ function initFormHandler() {
       centerName,
       phone: cleanPhone,
       city,
+      formationType,
       selectedDate,
       selectedTime,
       // Mapped sheet columns:
@@ -473,7 +476,7 @@ function initFormHandler() {
       etape: "Nouveau Lead",
       probabilite: "20%",
       meetLink: "",
-      notes: new Date().toISOString()
+      notes: `[${formationType}] ${new Date().toISOString()}`
     };
 
     // Save payload to local and session storage

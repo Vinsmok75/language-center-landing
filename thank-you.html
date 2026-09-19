@@ -81,6 +81,11 @@
         </div>
 
         <div class="details-row">
+          <span class="details-label">نوع التكوين / المركز:</span>
+          <span class="details-val" id="displayFormationType">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
           <span class="details-label">اسم مركز اللغات:</span>
           <span class="details-val" id="displayCenterName">جاري التحميل...</span>
         </div>
@@ -149,12 +154,15 @@
       const name = booking.fullName || urlParams.get('name') || 'المدير المحترم';
       const center = booking.centerName || urlParams.get('center') || 'مركز اللغات';
       const city = booking.city || urlParams.get('city') || 'المدينة';
+      const formation = booking.formationType || urlParams.get('formation') || 'مركز حضوري';
       const date = booking.selectedDate || urlParams.get('date') || 'اليوم';
       const time = booking.selectedTime || urlParams.get('time') || 'التوقيت المختار';
 
       document.getElementById('displayFullName').textContent = name;
       document.getElementById('displayCenterName').textContent = center;
       document.getElementById('displayCity').textContent = city;
+      const formationElem = document.getElementById('displayFormationType');
+      if (formationElem) formationElem.textContent = formation;
       document.getElementById('displayDate').textContent = date;
       document.getElementById('displayTime').textContent = time;
     });

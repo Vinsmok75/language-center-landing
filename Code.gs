@@ -123,13 +123,14 @@ function doPost(e) {
     var centerName = payload.centerName || payload.center_name || "";
     var phone = payload.phone || "";
     var city = payload.city || "";
+    var formationType = payload.formationType || payload.formation_type || "";
     var etape = payload.etape || "Nouveau Lead";
     var selectedDate = payload.selectedDate || payload.selected_date || "";
     var selectedTime = payload.selectedTime || payload.selected_time || "";
     var dateTime = payload.dateTime || (selectedDate && selectedTime ? selectedDate + " (" + selectedTime + ")" : "");
     var probabilite = payload.probabilite || "20%";
     var meetLink = payload.meetLink || "";
-    var notes = payload.notes || new Date().toISOString();
+    var notes = payload.notes || (formationType ? "[" + formationType + "] " : "") + new Date().toISOString();
 
     // Check for double bookings in Column F
     if (dateTime) {
