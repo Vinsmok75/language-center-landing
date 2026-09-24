@@ -55,19 +55,19 @@
 
       <!-- Confirmation Title -->
       <h1 class="thankyou-title">
-        تم تأكيد موعد الاستشارة ديالك بنجاح 🎉
+        تم تأكيد استلام معلومات مركزك بنجاح 🎉
       </h1>
 
       <!-- Sub-text -->
       <p class="thankyou-subtext">
-        غادي نتواصلو معاك فالواتساب فـ أقل من 30 دقيقة باش نأكدو الرابط والمعلومات الخاصة بالمركز ديالك.
+        غادي نتواصلو معاك فالواتساب فـ أقل من 30 دقيقة باش نناقشو التفاصيل ونشاركو معاك خطة العمل التشخيصية.
       </p>
 
-      <!-- Appointment Summary Card -->
+      <!-- Lead Summary Card -->
       <div class="appointment-details-card">
         <div class="details-header">
           <span>📋</span>
-          <span>معلومات الجلسة المحجوزة:</span>
+          <span>المعلومات المسجلة:</span>
         </div>
 
         <div class="details-row">
@@ -76,28 +76,23 @@
         </div>
 
         <div class="details-row">
+          <span class="details-label">نوع المركز:</span>
+          <span class="details-val" id="displayCenterType">جاري التحميل...</span>
+        </div>
+
+        <div class="details-row">
           <span class="details-label">المدينة:</span>
           <span class="details-val" id="displayCity">جاري التحميل...</span>
         </div>
 
         <div class="details-row">
-          <span class="details-label">نوع التكوين / المركز:</span>
-          <span class="details-val" id="displayFormationType">جاري التحميل...</span>
+          <span class="details-label">رقم الهاتف / الواتساب:</span>
+          <span class="details-val" id="displayPhone" style="direction: ltr; color: var(--emerald-primary);">جاري التحميل...</span>
         </div>
 
         <div class="details-row">
-          <span class="details-label">اسم مركز اللغات:</span>
-          <span class="details-val" id="displayCenterName">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">اليوم المحدد:</span>
-          <span class="details-val" id="displayDate" style="color: var(--emerald-primary);">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">التوقيت المختار:</span>
-          <span class="details-val" id="displayTime" style="color: var(--emerald-primary);">جاري التحميل...</span>
+          <span class="details-label">البريد الإلكتروني:</span>
+          <span class="details-val" id="displayEmail" style="direction: ltr;">جاري التحميل...</span>
         </div>
       </div>
 
@@ -105,22 +100,22 @@
       <div class="checklist-section">
         <h3 class="checklist-title">
           <span>📌</span>
-          <span>باش تستافد 100% من هاد الجلسة ديال 20 دقيقة:</span>
+          <span>الخطوات الموالية:</span>
         </h3>
         
         <div class="checklist-item">
           <span class="checklist-check">✓</span>
-          <span><strong>حدد اللغات المستهدفة:</strong> واش الألمانية (Ausbildung / Niveau B1/B2)، الفرنسية (TCF/TEF)، أو الإنجليزية.</span>
+          <span><strong>تأكيد الواتساب:</strong> المستشار المكلف غادي يتواصل معك عبر الرقم المسجل في أقل من 30 دقيقة.</span>
         </div>
 
         <div class="checklist-item">
           <span class="checklist-check">✓</span>
-          <span><strong>وجد أرقام المركز:</strong> شحال كتحط فالمعدل فالسبونسور وشحال من مقعد محتاج تعمر هاد الشهر باش تضمن الربحية.</span>
+          <span><strong>تحضير المعطيات:</strong> حدد اللغات المستهدفة (الألمانية، الفرنسية، الإنجليزية) والعدد المطلوب للأفواج القادمة.</span>
         </div>
 
         <div class="checklist-item">
           <span class="checklist-check">✓</span>
-          <span><strong>تأكد من تطبيق الواتساب:</strong> المستشار غادي يشارك معاك رابط المكالمة وملف دراسة الحالة مباشرة تما.</span>
+          <span><strong>جلسة العمل:</strong> مدة الجلسة 20 دقيقة، مركزة ومجانية 100% لتشخيص وضعية المركز وتقديم حلول عملية.</span>
         </div>
       </div>
 
@@ -140,7 +135,6 @@
       let booking = {};
       
       try {
-        // Read strictly from 'prospectBooking' in localStorage
         const stored = localStorage.getItem('prospectBooking') || sessionStorage.getItem('najah_current_lead') || localStorage.getItem('najah_last_booking');
         if (stored) {
           booking = JSON.parse(stored);
@@ -152,19 +146,22 @@
       const urlParams = new URLSearchParams(window.location.search);
 
       const name = booking.fullName || urlParams.get('name') || 'المدير المحترم';
-      const center = booking.centerName || urlParams.get('center') || 'مركز اللغات';
-      const city = booking.city || urlParams.get('city') || 'المدينة';
-      const formation = booking.formationType || urlParams.get('formation') || 'مركز حضوري';
-      const date = booking.selectedDate || urlParams.get('date') || 'اليوم';
-      const time = booking.selectedTime || urlParams.get('time') || 'التوقيت المختار';
+      const centerType = booking.centerType || booking.formationType || urlParams.get('center') || 'مركز لغات';
+      const city = booking.city || urlParams.get('city') || 'المغرب';
+      const phone = booking.phone || urlParams.get('phone') || '-';
+      const email = booking.email || urlParams.get('email') || '-';
 
-      document.getElementById('displayFullName').textContent = name;
-      document.getElementById('displayCenterName').textContent = center;
-      document.getElementById('displayCity').textContent = city;
-      const formationElem = document.getElementById('displayFormationType');
-      if (formationElem) formationElem.textContent = formation;
-      document.getElementById('displayDate').textContent = date;
-      document.getElementById('displayTime').textContent = time;
+      const elName = document.getElementById('displayFullName');
+      const elCenter = document.getElementById('displayCenterType');
+      const elCity = document.getElementById('displayCity');
+      const elPhone = document.getElementById('displayPhone');
+      const elEmail = document.getElementById('displayEmail');
+
+      if (elName) elName.textContent = name;
+      if (elCenter) elCenter.textContent = centerType;
+      if (elCity) elCity.textContent = city;
+      if (elPhone) elPhone.textContent = phone;
+      if (elEmail) elEmail.textContent = email;
     });
   </script>
 </body>

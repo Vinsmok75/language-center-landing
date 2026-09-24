@@ -3,15 +3,14 @@
  * Najah Media - Google Apps Script Backend (Code.gs)
  * ==========================================================================
  * Features:
- * 1. doGet(e): Reads Column F ("Date/Time") from active spreadsheet and returns
- *              clean JSON array of taken slots for dynamic conflict detection.
- * 2. doPost(e): Handles appointment bookings with LockService concurrency
- *               protection to prevent double bookings.
+ * 1. Automatic "N°" Row Order Classification (1, 2, 3, 4... sorted ascending).
+ * 2. Auto-converts legacy sheets without "N°" by inserting Column A.
+ * 3. Atomic Reservation Booking with LockService concurrency protection.
  * ==========================================================================
  */
 
 /**
- * Returns active sheet and sets up header row if brand new
+ * Returns active sheet and guarantees the "N°" column exists for row ordering
  */
 function getBookingSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -20,61 +19,61 @@ function getBookingSheet() {
   // If new sheet with no headers, initialize standard column headers
   if (sheet.getLastRow() === 0) {
     sheet.appendRow([
-      "Name of the prospect",  // Column A
-      "Business name",         // Column B
-      "Numéro de téléphone",   // Column C
-      "City",                  // Column D
-      "Étape",                 // Column E
-      "Date/Time",             // Column F (Critical slot tracking)
-      "Probabilité",           // Column G
-      "Meet Link",             // Column H
-      "Notes"                  // Column I
+      "N°",                      // Column A: Numéro d'ordre (1, 2, 3...)
+      "Date & Heure",            // Column B: Date de soumission
+      "Nom complet",             // Column C: Prospect full name
+      "Numéro de téléphone",     // Column D: WhatsApp / Téléphone
+      "Email",                   // Column E: Email
+      "Ville",                   // Column F: City
+      "Type de centre",          // Column G: Q1
+      "Ancienneté",              // Column H: Q2
+      "Élèves / mois",           // Column I: Q3
+      "Publicité (FB/IG)",       // Column J: Q4
+      "Notes"                    // Column K: Notes / Détails
     ]);
 
-    var headerRange = sheet.getRange(1, 1, 1, 9);
+    var headerRange = sheet.getRange(1, 1, 1, 11);
     headerRange.setFontWeight("bold");
     headerRange.setBackground("#0F2942");
     headerRange.setFontColor("#FFFFFF");
+    sheet.setFrozenRows(1);
+    return sheet;
+  }
+
+  // Ensure Column 1 is "N°" for existing sheets
+  var firstHeader = String(sheet.getRange(1, 1).getValue()).trim().toLowerCase();
+  var isNumberCol = (firstHeader === "n°" || firstHeader === "n" || firstHeader === "#" || firstHeader === "order" || firstHeader === "num");
+
+  if (!isNumberCol) {
+    sheet.insertColumnBefore(1);
+    sheet.getRange(1, 1).setValue("N°")
+      .setFontWeight("bold")
+      .setBackground("#0F2942")
+      .setFontColor("#FFFFFF");
+    
+    // Number existing rows
+    var totalRows = sheet.getLastRow();
+    if (totalRows >= 2) {
+      for (var r = 2; r <= totalRows; r++) {
+        sheet.getRange(r, 1).setValue(r - 1).setHorizontalAlignment("center");
+      }
+    }
   }
 
   return sheet;
 }
 
 /**
- * 1. Dynamic Conflict Detection (GET Request)
- * Reads column F ("Date/Time") and returns taken slots
- * Example output:
- * {
- *   "status": "success",
- *   "bookedSlots": ["اليوم (10:00)", "غداً (15:00)", "2026-09-17 (11:00)"]
- * }
+ * 1. Dynamic Check / Availability endpoint (GET Request)
  */
 function doGet(e) {
   try {
     var sheet = getBookingSheet();
     var lastRow = sheet.getLastRow();
-    var bookedSlots = [];
-
-    if (lastRow >= 2) {
-      // Column F is index 6 (Row 2, Column 6, NumRows, NumCols 1)
-      var range = sheet.getRange(2, 6, lastRow - 1, 1);
-      var values = range.getValues();
-
-      for (var i = 0; i < values.length; i++) {
-        var cellVal = values[i][0];
-        if (cellVal !== null && cellVal !== undefined) {
-          var slotStr = String(cellVal).trim();
-          if (slotStr.length > 0 && bookedSlots.indexOf(slotStr) === -1) {
-            bookedSlots.push(slotStr);
-          }
-        }
-      }
-    }
 
     var result = {
       status: "success",
-      count: bookedSlots.length,
-      bookedSlots: bookedSlots
+      totalLeads: Math.max(0, lastRow - 1)
     };
 
     return ContentService.createTextOutput(JSON.stringify(result))
@@ -83,8 +82,7 @@ function doGet(e) {
   } catch (error) {
     var errorResult = {
       status: "error",
-      message: error.toString(),
-      bookedSlots: []
+      message: error.toString()
     };
 
     return ContentService.createTextOutput(JSON.stringify(errorResult))
@@ -93,18 +91,18 @@ function doGet(e) {
 }
 
 /**
- * 2. Atomic Reservation Booking with LockService Concurrency Protection (POST Request)
+ * 2. Atomic Lead Registration & Automatic Number Row Order Classification (POST Request)
  */
 function doPost(e) {
   var lock = LockService.getScriptLock();
 
-  // Wait up to 30 seconds for other concurrent writes to finish
+  // Wait up to 30 seconds for concurrent writes
   try {
     lock.waitLock(30000);
   } catch (lockError) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
-      message: "النظام مشغول بمعالجة حجز آخر. المرجو المحاولة مجدداً بعد لحظات."
+      message: "Le serveur est occupé. Veuillez réessayer dans quelques instants."
     })).setMimeType(ContentService.MimeType.JSON);
   }
 
@@ -120,52 +118,80 @@ function doPost(e) {
     }
 
     var fullName = payload.fullName || payload.full_name || "";
-    var centerName = payload.centerName || payload.center_name || "";
+    var centerType = payload.centerType || payload.center_type || payload.centerName || payload.center_name || payload.formationType || "";
     var phone = payload.phone || "";
+    var email = payload.email || "";
     var city = payload.city || "";
-    var formationType = payload.formationType || payload.formation_type || "";
+    var activeDuration = payload.activeDuration || payload.active_duration || "";
+    var studentsPerMonth = payload.studentsPerMonth || payload.students_per_month || "";
+    var adExperience = payload.adExperience || payload.ad_experience || "";
     var etape = payload.etape || "Nouveau Lead";
-    var selectedDate = payload.selectedDate || payload.selected_date || "";
-    var selectedTime = payload.selectedTime || payload.selected_time || "";
-    var dateTime = payload.dateTime || (selectedDate && selectedTime ? selectedDate + " (" + selectedTime + ")" : "");
     var probabilite = payload.probabilite || "20%";
-    var meetLink = payload.meetLink || "";
-    var notes = payload.notes || (formationType ? "[" + formationType + "] " : "") + new Date().toISOString();
+    var formattedDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+1", "yyyy-MM-dd HH:mm:ss");
+    var notes = payload.notes || `[Ancienneté: ${activeDuration}] [Élèves/mois: ${studentsPerMonth}] [Publicité: ${adExperience}] [Email: ${email}]`;
 
-    // Check for double bookings in Column F
-    if (dateTime) {
-      var lastRow = sheet.getLastRow();
-      if (lastRow >= 2) {
-        var existingSlots = sheet.getRange(2, 6, lastRow - 1, 1).getValues();
-        for (var j = 0; j < existingSlots.length; j++) {
-          var existing = String(existingSlots[j][0]).trim();
-          if (existing === dateTime.trim()) {
-            return ContentService.createTextOutput(JSON.stringify({
-              status: "conflict",
-              message: "عذراً، هذا الموعد محجوز مسبقاً. يرجى اختيار موعد آخر."
-            })).setMimeType(ContentService.MimeType.JSON);
-          }
-        }
+    // Calculate next row order number (1, 2, 3, 4...)
+    var totalRows = sheet.getLastRow();
+    var nextOrderNumber = 1;
+
+    if (totalRows >= 2) {
+      var lastVal = sheet.getRange(totalRows, 1).getValue();
+      var parsed = parseInt(lastVal, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        nextOrderNumber = parsed + 1;
+      } else {
+        nextOrderNumber = totalRows;
       }
     }
 
-    // Append new row matching columns A - I
-    sheet.appendRow([
-      fullName,      // A: Name of the prospect
-      centerName,    // B: Business name
-      phone,         // C: Numéro de téléphone
-      city,          // D: City
-      etape,         // E: Étape
-      dateTime,      // F: Date/Time
-      probabilite,   // G: Probabilité
-      meetLink,      // H: Meet Link
-      notes          // I: Notes
-    ]);
+    // Check schema of Column 2 to support both new and legacy columns
+    var secondHeader = sheet.getLastColumn() >= 2 ? String(sheet.getRange(1, 2).getValue()).trim().toLowerCase() : "";
+
+    if (secondHeader.indexOf("date") !== -1) {
+      // Clean Multi-Step Schema
+      sheet.appendRow([
+        nextOrderNumber,
+        formattedDate,
+        fullName,
+        phone,
+        email,
+        city,
+        centerType,
+        activeDuration,
+        studentsPerMonth,
+        adExperience,
+        notes
+      ]);
+    } else {
+      // CRM Format with N° as Column A
+      sheet.appendRow([
+        nextOrderNumber,
+        fullName,
+        centerType,
+        phone,
+        city,
+        etape,
+        email,
+        probabilite,
+        adExperience,
+        notes
+      ]);
+    }
+
+    // Format N° column (center align)
+    var newLastRow = sheet.getLastRow();
+    sheet.getRange(newLastRow, 1).setHorizontalAlignment("center").setFontWeight("bold");
+
+    // Classify / Sort the table strictly into number row order (Column 1 ascending)
+    if (newLastRow >= 3) {
+      var dataRange = sheet.getRange(2, 1, newLastRow - 1, sheet.getLastColumn());
+      dataRange.sort({ column: 1, ascending: true });
+    }
 
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: "تم تسجيل الحجز بنجاح.",
-      bookedSlot: dateTime
+      message: "Lead enregistré avec succès dans l'ordre numérique.",
+      orderNumber: nextOrderNumber
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
@@ -175,15 +201,14 @@ function doPost(e) {
     })).setMimeType(ContentService.MimeType.JSON);
 
   } finally {
-    // Release the script lock
     lock.releaseLock();
   }
 }
 
 /**
- * Diagnostic test function - run inside Apps Script editor to verify doGet logic
+ * Diagnostic test function - run inside Apps Script editor to verify setup
  */
-function testDoGet() {
-  var res = doGet(null);
-  Logger.log("doGet output: " + res.getContent());
+function testSetup() {
+  var sheet = getBookingSheet();
+  Logger.log("Sheet rows: " + sheet.getLastRow() + ", columns: " + sheet.getLastColumn());
 }

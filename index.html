@@ -125,7 +125,7 @@
         </p>
       </div>
 
-      <!-- 8. BALANCED 2-COLUMN BOOKING & SCHEDULER SECTION (DESKTOP >= 768px) -->
+      <!-- 8. MULTI-STEP DIAGNOSTIC FORM SECTION -->
       <section class="booking-main-wrapper" id="bookingSection">
         <div class="booking-header">
           <h3 class="booking-title">حجز جلسة عمل تشخيصية بالمجان (20 دقيقة)</h3>
@@ -135,164 +135,351 @@
           </div>
         </div>
 
-        <form id="consultationForm">
-          <div class="booking-grid">
-            
-            <!-- COLUMN 1: THE 2-STEP INTERACTIVE CALENDAR SCHEDULER -->
-            <div class="scheduler-column">
-              
-              <!-- Step A: Choose Day -->
-              <div class="scheduler-step-header">
-                <span class="step-label-main">
-                  <span>📅</span>
-                  <span>1. اختار اليوم:</span>
-                </span>
-                <span class="step-label-sub">CHOISISSEZ UN JOUR</span>
-              </div>
+        <!-- Multi-Step Form Container -->
+        <form id="consultationForm" class="multistep-form-container" novalidate>
+          
+          <!-- Progress bar & step indicator -->
+          <div class="form-progress-wrap">
+            <div class="progress-info-row">
+              <span class="step-indicator-text" id="stepIndicatorText">Étape 1 sur 5</span>
+              <span class="step-percentage-text" id="stepPercentageText">20%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progressBarFill" style="width: 20%;"></div>
+            </div>
+          </div>
 
-              <!-- Interactive Date Cards Grid -->
-              <div class="days-cards-grid" id="daysCardsGrid">
-                <!-- Dynamically populated with Day, Date Number, and Month -->
-              </div>
-
-              <!-- Step B: Available Time Slots -->
-              <div class="scheduler-step-header" style="margin-top: 6px;">
-                <span class="step-label-main">
-                  <span>⏰</span>
-                  <span>2. الأوقات المتاحة:</span>
-                </span>
-                <span class="step-label-sub" id="slotSyncStatus">CRÉNEAUX DISPONIBLES</span>
-              </div>
-
-              <!-- Selectable Time Chips Grid -->
-              <div class="time-chips-grid" id="timeChipsGrid">
-                <!-- Dynamically populated time chips -->
-              </div>
-
-              <!-- Live Selected Slot Indicator -->
-              <div class="selected-slot-indicator">
-                <span>الموعد المحدد:</span>
-                <strong id="selectedSlotPreview">جاري التحميل...</strong>
-              </div>
-
-              <!-- Hidden Inputs for Form Submission -->
-              <input type="hidden" id="selectedDateInput" name="selected_date" value="">
-              <input type="hidden" id="selectedTimeInput" name="selected_time" value="">
+          <!-- Step 1: Question 1 -->
+          <div class="form-step active" data-step="1">
+            <div class="step-header-box">
+              <span class="step-badge">Question 1 sur 5</span>
+              <h4 class="step-question-title">Quel type de centre gérez-vous ?</h4>
             </div>
 
-            <!-- COLUMN 2: CONTACT FORM & INPUTS -->
-            <div class="form-column">
-              <div class="lead-form">
-                
-                <!-- Input 1: Full Name -->
-                <div class="form-group">
-                  <label class="form-label" for="fullName">
-                    <span>اسم المسؤول أو المدير</span>
-                    <span class="required-star">*</span>
-                  </label>
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="center_type" value="Centre de langues" required>
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Centre de langues</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="center_type" value="Centre de formation professionnelle">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Centre de formation professionnelle</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="center_type" value="Soutien scolaire">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Soutien scolaire</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="center_type" value="Formation en ligne">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Formation en ligne</span>
+                </div>
+              </label>
+
+              <label class="option-card option-card-autre">
+                <input type="radio" name="center_type" value="Autre">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Autre</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="autre-specify-wrap" id="centerTypeAutreWrap" style="display: none;">
+              <input type="text" id="centerTypeAutreInput" class="form-input" placeholder="Précisez votre type d'activité...">
+            </div>
+
+            <div class="step-actions single-next">
+              <button type="button" class="step-btn next-btn" data-next="2">
+                <span>Suivant</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Question 2 -->
+          <div class="form-step" data-step="2">
+            <div class="step-header-box">
+              <span class="step-badge">Question 2 sur 5</span>
+              <h4 class="step-question-title">Depuis combien de temps votre centre est actif ?</h4>
+            </div>
+
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="active_duration" value="Moins de 6 mois" required>
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Moins de 6 mois</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="active_duration" value="6mois -1 an">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">6mois -1 an</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="active_duration" value="1 - 3 ans">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">1 - 3 ans</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="active_duration" value="+ 3 ans">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">+ 3 ans</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="1">
+                <span class="btn-arrow">→</span>
+                <span>Précédent</span>
+              </button>
+              <button type="button" class="step-btn next-btn" data-next="3">
+                <span>Suivant</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Question 3 -->
+          <div class="form-step" data-step="3">
+            <div class="step-header-box">
+              <span class="step-badge">Question 3 sur 5</span>
+              <h4 class="step-question-title">Combien d'eleves inscrivez-vous en moyenne par mois ?</h4>
+            </div>
+
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="students_per_month" value="Moins de 10" required>
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Moins de 10</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="students_per_month" value="10 - 30">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">10 - 30</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="students_per_month" value="30 - 50">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">30 - 50</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="students_per_month" value="+50">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">+50</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="2">
+                <span class="btn-arrow">→</span>
+                <span>Précédent</span>
+              </button>
+              <button type="button" class="step-btn next-btn" data-next="4">
+                <span>Suivant</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4: Question 4 -->
+          <div class="form-step" data-step="4">
+            <div class="step-header-box">
+              <span class="step-badge">Question 4 sur 5</span>
+              <h4 class="step-question-title">Avez-vous deja investi dans la publicite (Facebook / Instagram) ?</h4>
+            </div>
+
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="ad_experience" value="Oui, regulierement" required>
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Oui, regulierement</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="ad_experience" value="Oui, mais sans resultats">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Oui, mais sans resultats</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="ad_experience" value="Non, Jamais">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">Non, Jamais</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="3">
+                <span class="btn-arrow">→</span>
+                <span>Précédent</span>
+              </button>
+              <button type="button" class="step-btn next-btn" data-next="5">
+                <span>Suivant</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 5: Question 5 - Informations de contact -->
+          <div class="form-step" data-step="5">
+            <div class="step-header-box">
+              <span class="step-badge">Question 5 sur 5</span>
+              <h4 class="step-question-title">Informations de contact</h4>
+              <p class="step-question-desc">Pour que nous puissions collaborer ou que je puisse vous aider au mieux, vous pouvez partager vos formations et vos compétences directement ici dans ce formulaire..</p>
+            </div>
+
+            <div class="contact-fields-wrap">
+              <!-- Nom complet -->
+              <div class="form-group">
+                <label class="form-label" for="fullName">
+                  <span>Nom complet</span>
+                  <span class="required-star">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="fullName" 
+                  name="full_name" 
+                  class="form-input" 
+                  placeholder="Entrez votre réponse." 
+                  required
+                >
+              </div>
+
+              <!-- Numéro de téléphone -->
+              <div class="form-group">
+                <label class="form-label" for="phone">
+                  <span>Numéro de téléphone</span>
+                  <span class="required-star">*</span>
+                </label>
+                <div class="phone-input-wrap">
+                  <span class="phone-country-code">🇲🇦 +212</span>
                   <input 
-                    type="text" 
-                    id="fullName" 
-                    name="full_name" 
-                    class="form-input" 
-                    placeholder="مثال: ذ. كريم بنجلون" 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    class="form-input phone-input" 
+                    placeholder="Entrez votre réponse." 
                     required
                   >
                 </div>
+              </div>
 
-                <!-- Row: City & Formation Type -->
-                <div class="form-row">
-                  <!-- Input 2: City (<select> dropdown) -->
-                  <div class="form-group">
-                    <label class="form-label" for="citySelect">
-                      <span>المدينة</span>
-                      <span class="required-star">*</span>
-                    </label>
-                    <select id="citySelect" name="city" class="form-select" required>
-                      <option value="" disabled selected>اختر المدينة...</option>
-                      <option value="فاس (Fès)">فاس (Fès)</option>
-                      <option value="مكناس (Meknès)">مكناس (Meknès)</option>
-                      <option value="الرباط (Rabat)">الرباط (Rabat)</option>
-                      <option value="الدار البيضاء (Casablanca)">الدار البيضاء (Casablanca)</option>
-                      <option value="طنجة (Tanger)">طنجة (Tanger)</option>
-                      <option value="مراكش (Marrakech)">مراكش (Marrakech)</option>
-                      <option value="مدينة أخرى (Autre)">مدينة أخرى (Autre)</option>
-                    </select>
-                  </div>
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label" for="email">
+                  <span>Email</span>
+                  <span class="required-star">*</span>
+                </label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="Entrez votre réponse." 
+                  required
+                >
+              </div>
 
-                  <!-- Input 3: Formation Type (<select> dropdown) -->
-                  <div class="form-group">
-                    <label class="form-label" for="formationType">
-                      <span>نوع التكوين / المركز</span>
-                      <span class="required-star">*</span>
-                    </label>
-                    <select id="formationType" name="formation_type" class="form-select" required>
-                      <option value="" disabled selected>اختر نوع التكوين...</option>
-                      <option value="مركز لغات حضوري (Présentiel)">مركز لغات حضوري (Présentiel)</option>
-                      <option value="تكوين عن بعد أونلاين (En ligne)">تكوين عن بعد أونلاين (En ligne)</option>
-                      <option value="حضوري وعن بعد معاً (Présentiel & En ligne)">حضوري وعن بعد معاً (Présentiel & En ligne)</option>
-                      <option value="مركز تكوين مهني (Centre de formation)">مركز تكوين مهني (Centre de formation)</option>
-                    </select>
-                  </div>
-                </div>
+              <!-- Ville -->
+              <div class="form-group">
+                <label class="form-label" for="citySelect">
+                  <span>Ville</span>
+                  <span class="required-star">*</span>
+                </label>
+                <select id="citySelect" name="city" class="form-select" required>
+                  <option value="" disabled selected>Entrez votre réponse.</option>
+                  <option value="Meknès">Meknès</option>
+                  <option value="Fès">Fès</option>
+                  <option value="Casablanca">Casablanca</option>
+                  <option value="Rabat">Rabat</option>
+                  <option value="Tanger">Tanger</option>
+                  <option value="Agadir">Agadir</option>
+                  <option value="Marrakech">Marrakech</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
 
-                <!-- Input 3: Center Name -->
-                <div class="form-group">
-                  <label class="form-label" for="centerName">
-                    <span>اسم مركز اللغات</span>
-                    <span class="required-star">*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    id="centerName" 
-                    name="center_name" 
-                    class="form-input" 
-                    placeholder="مثال: أكاديمية اللغات الحية" 
-                    required
-                  >
-                </div>
+              <!-- Précisez votre ville (si Autre) -->
+              <div class="form-group" id="cityAutreWrap" style="display: none;">
+                <label class="form-label" for="cityAutreInput">
+                  <span>Précisez votre ville</span>
+                  <span class="required-star">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="cityAutreInput" 
+                  class="form-input" 
+                  placeholder="Entrez votre réponse."
+                >
+              </div>
+            </div>
 
-                <!-- Input 4: WhatsApp Number (+212) -->
-                <div class="form-group">
-                  <label class="form-label" for="phone">
-                    <span>رقم الواتساب المباشر</span>
-                    <span class="required-star">*</span>
-                  </label>
-                  <div class="phone-input-wrap">
-                    <span class="phone-country-code">🇲🇦 +212</span>
-                    <input 
-                      type="tel" 
-                      id="phone" 
-                      name="phone" 
-                      class="form-input phone-input" 
-                      placeholder="06 12 34 56 78" 
-                      required
-                    >
-                  </div>
-                </div>
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="4">
+                <span class="btn-arrow">→</span>
+                <span>Précédent</span>
+              </button>
+              <button type="submit" class="cta-submit-btn" id="submitBtn">
+                <span>Envoyer ma demande</span>
+                <span class="cta-arrow">←</span>
+              </button>
+            </div>
 
-                <!-- CTA Submit Button -->
-                <button type="submit" class="cta-submit-btn" id="submitBtn">
-                  <span>تأكيد الموعد واكتشاف الخطة</span>
-                  <span class="cta-arrow">←</span>
-                </button>
-
-                <!-- Trust Guarantees -->
-                <div class="form-guarantee-row">
-                  <div class="guarantee-item">
-                    <span class="guarantee-icon">🔒</span>
-                    <span>بيانات المركز سرية 100%</span>
-                  </div>
-                  <div class="guarantee-item">
-                    <span class="guarantee-icon">⚡</span>
-                    <span>مكالمة مركزة 20 دقيقة</span>
-                  </div>
-                </div>
-
+            <!-- Trust Guarantees -->
+            <div class="form-guarantee-row">
+              <div class="guarantee-item">
+                <span class="guarantee-icon">🔒</span>
+                <span>بيانات المركز سرية 100%</span>
+              </div>
+              <div class="guarantee-item">
+                <span class="guarantee-icon">⚡</span>
+                <span>مكالمة تشخيصية مركزة 20 دقيقة</span>
               </div>
             </div>
 
           </div>
+
         </form>
       </section>
 
