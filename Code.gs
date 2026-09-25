@@ -187,7 +187,7 @@ function doPost(e) {
       dateOfTheLead,       // Column 1: Date of the lead
       prospectName,        // Column 2: Name of the prospect
       businessName,        // Column 3: Businesse name
-      "'" + phone,         // Column 4: Numéro de téléphone (text prefix preserves 0 & +)
+      phone,               // Column 4: Numéro de téléphone
       city,                // Column 5: City
       etape,               // Column 6: Étape
       dateTime,            // Column 7: Date/Time
@@ -198,18 +198,18 @@ function doPost(e) {
 
     sheet.appendRow(newRow);
 
-    // Format new row
     var lastRowIdx = sheet.getLastRow();
-    
-    // Explicitly set phone column as plain text to avoid numeric issues
-    sheet.getRange(lastRowIdx, 4).setNumberFormat("@");
-    
-    // Center align dates, step, probability, city
-    sheet.getRange(lastRowIdx, 1).setHorizontalAlignment("center");
-    sheet.getRange(lastRowIdx, 5).setHorizontalAlignment("center");
-    sheet.getRange(lastRowIdx, 6).setHorizontalAlignment("center");
-    sheet.getRange(lastRowIdx, 7).setHorizontalAlignment("center");
-    sheet.getRange(lastRowIdx, 8).setHorizontalAlignment("center");
+
+    // Optional cosmetic alignment (wrapped in try-catch to support typed columns/Tables)
+    try {
+      sheet.getRange(lastRowIdx, 1).setHorizontalAlignment("center");
+      sheet.getRange(lastRowIdx, 5).setHorizontalAlignment("center");
+      sheet.getRange(lastRowIdx, 6).setHorizontalAlignment("center");
+      sheet.getRange(lastRowIdx, 7).setHorizontalAlignment("center");
+      sheet.getRange(lastRowIdx, 8).setHorizontalAlignment("center");
+    } catch (formatErr) {
+      // Ignored for typed columns/Google Sheets Tables
+    }
 
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
