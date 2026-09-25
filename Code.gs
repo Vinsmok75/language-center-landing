@@ -1,62 +1,76 @@
 /**
  * ==========================================================================
- * Najah Media - Google Apps Script Backend (Code.gs)
+ * Najah Media - Google Apps Script CRM Backend (Code.gs)
  * ==========================================================================
+ * 
+ * Target Google Sheet Columns:
+ * 1. Date of the lead
+ * 2. Name of the prospect
+ * 3. Businesse name
+ * 4. Numéro de téléphone
+ * 5. City
+ * 6. Étape
+ * 7. Date/Time
+ * 8. Probabilité
+ * 9. Meet Link (If meet accepted)
+ * 10. Notes
+ * 
  * Features:
- * 1. Automatic "N°" Row Order Classification (1, 2, 3, 4... sorted ascending).
- * 2. Auto-converts legacy sheets without "N°" by inserting Column A.
- * 3. Atomic Reservation Booking with LockService concurrency protection.
+ * - Concurrency Safe with LockService
+ * - Preserves leading zeros & '+' signs for Moroccan phone numbers
+ * - Auto-initializes headers with clean CRM styling if the sheet is empty
+ * - Combines multi-step qualification answers (Email, Ancienneté, Élèves/mois, Pub) into Notes
+ * - Built-in test function to verify inside Apps Script editor
  * ==========================================================================
  */
+
+// Target Sheet configuration (leave null for active sheet, or specify name like "Feuille 1" or "Leads")
+var CONFIG = {
+  SHEET_NAME: null, // e.g. "Leads" or null to use active sheet
+  TIMEZONE: "GMT+1", // Morocco standard time
+  DEFAULT_ETAPE: "Nouveau Lead",
+  DEFAULT_PROBABILITE: "20%",
+  HEADERS: [
+    "Date of the lead",
+    "Name of the prospect",
+    "Businesse name",
+    "Numéro de téléphone",
+    "City",
+    "Étape",
+    "Date/Time",
+    "Probabilité",
+    "Meet Link (If meet accepted)",
+    "Notes"
+  ]
+};
 
 /**
- * Returns active sheet and guarantees the "N°" column exists for row ordering
+ * Retrieves the destination sheet and creates headers if blank
  */
-function getBookingSheet() {
+function getTargetSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getActiveSheet();
+  var sheet = CONFIG.SHEET_NAME ? ss.getSheetByName(CONFIG.SHEET_NAME) : ss.getActiveSheet();
 
-  // If new sheet with no headers, initialize standard column headers
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      "N°",                      // Column A: Numéro d'ordre (1, 2, 3...)
-      "Date & Heure",            // Column B: Date de soumission
-      "Nom complet",             // Column C: Prospect full name
-      "Numéro de téléphone",     // Column D: WhatsApp / Téléphone
-      "Email",                   // Column E: Email
-      "Ville",                   // Column F: City
-      "Type de centre",          // Column G: Q1
-      "Ancienneté",              // Column H: Q2
-      "Élèves / mois",           // Column I: Q3
-      "Publicité (FB/IG)",       // Column J: Q4
-      "Notes"                    // Column K: Notes / Détails
-    ]);
-
-    var headerRange = sheet.getRange(1, 1, 1, 11);
-    headerRange.setFontWeight("bold");
-    headerRange.setBackground("#0F2942");
-    headerRange.setFontColor("#FFFFFF");
-    sheet.setFrozenRows(1);
-    return sheet;
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.SHEET_NAME || "Leads");
   }
 
-  // Ensure Column 1 is "N°" for existing sheets
-  var firstHeader = String(sheet.getRange(1, 1).getValue()).trim().toLowerCase();
-  var isNumberCol = (firstHeader === "n°" || firstHeader === "n" || firstHeader === "#" || firstHeader === "order" || firstHeader === "num");
+  // If the sheet has no rows, create and format the 10 headers
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(CONFIG.HEADERS);
 
-  if (!isNumberCol) {
-    sheet.insertColumnBefore(1);
-    sheet.getRange(1, 1).setValue("N°")
-      .setFontWeight("bold")
-      .setBackground("#0F2942")
-      .setFontColor("#FFFFFF");
-    
-    // Number existing rows
-    var totalRows = sheet.getLastRow();
-    if (totalRows >= 2) {
-      for (var r = 2; r <= totalRows; r++) {
-        sheet.getRange(r, 1).setValue(r - 1).setHorizontalAlignment("center");
-      }
+    var headerRange = sheet.getRange(1, 1, 1, CONFIG.HEADERS.length);
+    headerRange.setFontWeight("bold");
+    headerRange.setBackground("#0F2942"); // Dark Navy Blue
+    headerRange.setFontColor("#FFFFFF");  // Crisp White
+    headerRange.setHorizontalAlignment("center");
+    headerRange.setVerticalAlignment("middle");
+    sheet.setRowHeight(1, 38);
+    sheet.setFrozenRows(1);
+
+    // Auto fit initial widths
+    for (var col = 1; col <= CONFIG.HEADERS.length; col++) {
+      sheet.autoResizeColumn(col);
     }
   }
 
@@ -64,140 +78,149 @@ function getBookingSheet() {
 }
 
 /**
- * 1. Dynamic Check / Availability endpoint (GET Request)
+ * Handle GET request (Health check and status from browser)
  */
 function doGet(e) {
   try {
-    var sheet = getBookingSheet();
-    var lastRow = sheet.getLastRow();
-
-    var result = {
-      status: "success",
-      totalLeads: Math.max(0, lastRow - 1)
-    };
-
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    var errorResult = {
-      status: "error",
-      message: error.toString()
-    };
-
-    return ContentService.createTextOutput(JSON.stringify(errorResult))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-/**
- * 2. Atomic Lead Registration & Automatic Number Row Order Classification (POST Request)
- */
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-
-  // Wait up to 30 seconds for concurrent writes
-  try {
-    lock.waitLock(30000);
-  } catch (lockError) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: "Le serveur est occupé. Veuillez réessayer dans quelques instants."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  try {
-    var sheet = getBookingSheet();
-    var rawContents = (e && e.postData && e.postData.contents) ? e.postData.contents : "{}";
-    var payload = {};
-
-    try {
-      payload = JSON.parse(rawContents);
-    } catch (parseErr) {
-      payload = (e && e.parameter) ? e.parameter : {};
-    }
-
-    var fullName = payload.fullName || payload.full_name || "";
-    var centerType = payload.centerType || payload.center_type || payload.centerName || payload.center_name || payload.formationType || "";
-    var phone = payload.phone || "";
-    var email = payload.email || "";
-    var city = payload.city || "";
-    var activeDuration = payload.activeDuration || payload.active_duration || "";
-    var studentsPerMonth = payload.studentsPerMonth || payload.students_per_month || "";
-    var adExperience = payload.adExperience || payload.ad_experience || "";
-    var etape = payload.etape || "Nouveau Lead";
-    var probabilite = payload.probabilite || "20%";
-    var formattedDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+1", "yyyy-MM-dd HH:mm:ss");
-    var notes = payload.notes || `[Ancienneté: ${activeDuration}] [Élèves/mois: ${studentsPerMonth}] [Publicité: ${adExperience}] [Email: ${email}]`;
-
-    // Calculate next row order number (1, 2, 3, 4...)
+    var sheet = getTargetSheet();
     var totalRows = sheet.getLastRow();
-    var nextOrderNumber = 1;
+    var leadsCount = Math.max(0, totalRows - 1);
 
-    if (totalRows >= 2) {
-      var lastVal = sheet.getRange(totalRows, 1).getValue();
-      var parsed = parseInt(lastVal, 10);
-      if (!isNaN(parsed) && parsed > 0) {
-        nextOrderNumber = parsed + 1;
-      } else {
-        nextOrderNumber = totalRows;
-      }
-    }
-
-    // Check schema of Column 2 to support both new and legacy columns
-    var secondHeader = sheet.getLastColumn() >= 2 ? String(sheet.getRange(1, 2).getValue()).trim().toLowerCase() : "";
-
-    if (secondHeader.indexOf("date") !== -1) {
-      // Clean Multi-Step Schema
-      sheet.appendRow([
-        nextOrderNumber,
-        formattedDate,
-        fullName,
-        phone,
-        email,
-        city,
-        centerType,
-        activeDuration,
-        studentsPerMonth,
-        adExperience,
-        notes
-      ]);
-    } else {
-      // CRM Format with N° as Column A
-      sheet.appendRow([
-        nextOrderNumber,
-        fullName,
-        centerType,
-        phone,
-        city,
-        etape,
-        email,
-        probabilite,
-        adExperience,
-        notes
-      ]);
-    }
-
-    // Format N° column (center align)
-    var newLastRow = sheet.getLastRow();
-    sheet.getRange(newLastRow, 1).setHorizontalAlignment("center").setFontWeight("bold");
-
-    // Classify / Sort the table strictly into number row order (Column 1 ascending)
-    if (newLastRow >= 3) {
-      var dataRange = sheet.getRange(2, 1, newLastRow - 1, sheet.getLastColumn());
-      dataRange.sort({ column: 1, ascending: true });
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({
+    var response = {
       status: "success",
-      message: "Lead enregistré avec succès dans l'ordre numérique.",
-      orderNumber: nextOrderNumber
-    })).setMimeType(ContentService.MimeType.JSON);
+      message: "Webhook Google Apps Script opérationnel.",
+      totalLeads: leadsCount,
+      columns: CONFIG.HEADERS
+    };
+
+    return ContentService.createTextOutput(JSON.stringify(response))
+      .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
       message: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Handle POST request (Form submissions from the landing page)
+ */
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+
+  // Prevent concurrency conflicts (wait up to 30s)
+  try {
+    lock.waitLock(30000);
+  } catch (lockErr) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "Serveur occupé. Réessayez dans un instant."
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  try {
+    var sheet = getTargetSheet();
+
+    // Parse payload (supports JSON payload and standard form data)
+    var rawContents = (e && e.postData && e.postData.contents) ? e.postData.contents : "{}";
+    var payload = {};
+
+    try {
+      payload = JSON.parse(rawContents);
+    } catch (parseError) {
+      payload = (e && e.parameter) ? e.parameter : {};
+    }
+
+    var now = new Date();
+    var scriptTimeZone = Session.getScriptTimeZone() || CONFIG.TIMEZONE;
+
+    // 1. Date of the lead (dd/MM/yyyy)
+    var dateOfTheLead = Utilities.formatDate(now, scriptTimeZone, "dd/MM/yyyy");
+
+    // 2. Name of the prospect
+    var prospectName = payload.fullName || payload.full_name || payload.prospectName || payload.name || "";
+
+    // 3. Businesse name (Center type or custom business name)
+    var businessName = payload.businessName || payload.centerType || payload.center_type || payload.centerName || payload.formationType || "";
+
+    // 4. Numéro de téléphone (Format with leading single quote or preserve clean phone)
+    var rawPhone = payload.phone || payload.phone_number || payload.telephone || "";
+    var phone = String(rawPhone).trim();
+
+    // 5. City
+    var city = payload.city || payload.ville || "";
+
+    // 6. Étape
+    var etape = payload.etape || payload.step || CONFIG.DEFAULT_ETAPE;
+
+    // 7. Date/Time (Exact submission timestamp dd/MM/yyyy HH:mm)
+    var dateTime = payload.dateTime || payload.datetime || Utilities.formatDate(now, scriptTimeZone, "dd/MM/yyyy HH:mm");
+
+    // 8. Probabilité
+    var probabilite = payload.probabilite || payload.probability || CONFIG.DEFAULT_PROBABILITE;
+
+    // 9. Meet Link (If meet accepted)
+    var meetLink = payload.meetLink || payload.meet_link || "";
+
+    // 10. Notes (Consolidate qualification questionnaire answers and email)
+    var email = payload.email || "";
+    var activeDuration = payload.activeDuration || payload.active_duration || "";
+    var studentsPerMonth = payload.studentsPerMonth || payload.students_per_month || "";
+    var adExperience = payload.adExperience || payload.ad_experience || "";
+
+    var notesParts = [];
+    if (email) notesParts.push("📧 Email: " + email);
+    if (activeDuration) notesParts.push("⏳ Ancienneté: " + activeDuration);
+    if (studentsPerMonth) notesParts.push("👥 Élèves/mois: " + studentsPerMonth);
+    if (adExperience) notesParts.push("📢 Publicité: " + adExperience);
+    if (payload.customNotes) notesParts.push("📝 Notes: " + payload.customNotes);
+
+    var notes = notesParts.join(" | ");
+    if (!notes && payload.notes) {
+      notes = payload.notes;
+    }
+
+    // Append row strictly in the specified 10-column layout:
+    var newRow = [
+      dateOfTheLead,       // Column 1: Date of the lead
+      prospectName,        // Column 2: Name of the prospect
+      businessName,        // Column 3: Businesse name
+      "'" + phone,         // Column 4: Numéro de téléphone (text prefix preserves 0 & +)
+      city,                // Column 5: City
+      etape,               // Column 6: Étape
+      dateTime,            // Column 7: Date/Time
+      probabilite,         // Column 8: Probabilité
+      meetLink,            // Column 9: Meet Link (If meet accepted)
+      notes                // Column 10: Notes
+    ];
+
+    sheet.appendRow(newRow);
+
+    // Format new row
+    var lastRowIdx = sheet.getLastRow();
+    
+    // Explicitly set phone column as plain text to avoid numeric issues
+    sheet.getRange(lastRowIdx, 4).setNumberFormat("@");
+    
+    // Center align dates, step, probability, city
+    sheet.getRange(lastRowIdx, 1).setHorizontalAlignment("center");
+    sheet.getRange(lastRowIdx, 5).setHorizontalAlignment("center");
+    sheet.getRange(lastRowIdx, 6).setHorizontalAlignment("center");
+    sheet.getRange(lastRowIdx, 7).setHorizontalAlignment("center");
+    sheet.getRange(lastRowIdx, 8).setHorizontalAlignment("center");
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      message: "Lead enregistré avec succès dans le CRM Google Sheets.",
+      row: lastRowIdx
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
 
   } finally {
@@ -206,9 +229,29 @@ function doPost(e) {
 }
 
 /**
- * Diagnostic test function - run inside Apps Script editor to verify setup
+ * Quick Test function to run directly inside Google Apps Script editor
+ * Click "Run" -> "testAddLead" to verify the columns and output instantly
  */
-function testSetup() {
-  var sheet = getBookingSheet();
-  Logger.log("Sheet rows: " + sheet.getLastRow() + ", columns: " + sheet.getLastColumn());
+function testAddLead() {
+  var fakeEvent = {
+    postData: {
+      contents: JSON.stringify({
+        fullName: "Mohammed Alami",
+        centerType: "Centre de langues",
+        businessName: "Alami Language Academy",
+        phone: "+212612345678",
+        email: "alami@example.com",
+        city: "Casablanca",
+        activeDuration: "1 - 3 ans",
+        studentsPerMonth: "30 - 50",
+        adExperience: "Oui, régulièrement",
+        etape: "Nouveau Lead",
+        probabilite: "20%",
+        meetLink: ""
+      })
+    }
+  };
+
+  var res = doPost(fakeEvent);
+  Logger.log("Test Output: " + res.getContent());
 }

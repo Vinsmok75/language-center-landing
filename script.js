@@ -350,6 +350,8 @@ function initMultiStepForm() {
     // Package payload matching Google Sheet schema
     const payload = {
       fullName: fullName,
+      prospectName: fullName,
+      businessName: centerTypeVal,
       centerType: centerTypeVal,
       activeDuration: activeDurationVal,
       studentsPerMonth: studentsVal,
@@ -357,13 +359,13 @@ function initMultiStepForm() {
       phone: cleanPhone,
       email: email,
       city: cityVal,
-      // Fallback fields for existing Google Sheet columns:
+      // Fallback fields for CRM Google Sheet columns:
       centerName: centerTypeVal,
       formationType: centerTypeVal,
       etape: "Nouveau Lead",
       probabilite: "20%",
       meetLink: "",
-      notes: `[Ancienneté: ${activeDurationVal}] [Élèves/mois: ${studentsVal}] [Publicité: ${adVal}] [Email: ${email}]`
+      notes: `[Email: ${email}] [Ancienneté: ${activeDurationVal}] [Élèves/mois: ${studentsVal}] [Publicité: ${adVal}]`
     };
 
     // Store in localStorage & sessionStorage for Thank-You page display
