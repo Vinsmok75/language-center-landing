@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تم تأكيد موعدك بنجاح 🎉 | نجاح ميديا</title>
-  <meta name="description" content="تم حجز جلسة العمل التشخيصية لمركز اللغات ديالك. سنتواصل معك عبر الواتساب في أقل من 30 دقيقة.">
+  <title>تم تأكيد طلبك بنجاح | رضا حمود</title>
+  <meta name="description" content="تم استلام وتأكيد طلبك بنجاح. سنتواصل معك عبر الواتساب في أقرب وقت.">
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2316a34a'/><path d='M30 52 L43 65 L70 38' stroke='%23ffffff' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Cairo & Alexandria -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Alexandria:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Alexandria:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Dedicated Stylesheet -->
+  <link rel="stylesheet" href="assets/css/thank-you.css">
 
   <!-- Meta Pixel Code -->
   <script>
@@ -30,13 +30,13 @@
     fbq('init', '1655344052778905');
     fbq('track', 'PageView');
     fbq('track', 'Schedule', {
-      content_name: 'Consultation 20min',
-      content_category: 'B2B Language Center Acquisition',
+      content_name: 'Lead Submission Confirmed',
+      content_category: 'Consulting Acquisition Funnel',
       currency: 'MAD',
       value: 0.00
     });
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img height="1" width="1" alt="" class="pixel-noscript-img"
     src="https://www.facebook.com/tr?id=1655344052778905&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
@@ -45,84 +45,60 @@
 
   <div class="page-wrapper">
 
-    <!-- MAIN ELEVATED CARD -->
+    <!-- MAIN ELEVATED WHITE CARD -->
     <main class="main-card thankyou-card">
 
-      <!-- Success Icon -->
+      <!-- Success Check Bubble with clean SVG -->
       <div class="success-check-bubble">
-        <span>✓</span>
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
       </div>
 
-      <!-- Confirmation Title -->
-      <h1 class="thankyou-title">
-        تم تأكيد استلام معلومات مركزك بنجاح 🎉
+      <!-- Source Eyebrow Pill -->
+      <div class="source-pill-badge" id="sourcePill">
+        <span id="sourcePillText">استشارة ملء أفواج مراكز اللغات</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="thankyou-title" id="thankyouTitle">
+        تم تأكيد موعد الاستشارة ديالك بنجاح
       </h1>
 
-      <!-- Sub-text -->
-      <p class="thankyou-subtext">
+      <!-- Subheadline -->
+      <p class="thankyou-subtext" id="thankyouSubtext">
         غادي نتواصلو معاك فالواتساب فـ أقل من 30 دقيقة باش نناقشو التفاصيل ونشاركو معاك خطة العمل التشخيصية.
       </p>
 
-      <!-- Lead Summary Card -->
+      <!-- Details Summary Card -->
       <div class="appointment-details-card">
         <div class="details-header">
-          <span>📋</span>
-          <span>المعلومات المسجلة:</span>
+          <span class="details-header-title">
+            <span id="detailsHeaderTitle">المعلومات المسجلة:</span>
+          </span>
+          <span class="details-status-tag" id="detailsStatusTag">حجز مؤكد</span>
         </div>
 
-        <div class="details-row">
-          <span class="details-label">اسم المسؤول:</span>
-          <span class="details-val" id="displayFullName">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">نوع المركز:</span>
-          <span class="details-val" id="displayCenterType">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">المدينة:</span>
-          <span class="details-val" id="displayCity">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">رقم الهاتف / الواتساب:</span>
-          <span class="details-val" id="displayPhone" style="direction: ltr; color: var(--emerald-primary);">جاري التحميل...</span>
-        </div>
-
-        <div class="details-row">
-          <span class="details-label">البريد الإلكتروني:</span>
-          <span class="details-val" id="displayEmail" style="direction: ltr;">جاري التحميل...</span>
+        <div id="detailsDataGrid">
+          <!-- Filled dynamically via JavaScript -->
         </div>
       </div>
 
-      <!-- Preparation Checklist -->
+      <!-- Preparation Checklist / Next Steps Section -->
       <div class="checklist-section">
-        <h3 class="checklist-title">
-          <span>📌</span>
-          <span>الخطوات الموالية:</span>
-        </h3>
-        
-        <div class="checklist-item">
-          <span class="checklist-check">✓</span>
-          <span><strong>تأكيد الواتساب:</strong> المستشار المكلف غادي يتواصل معك عبر الرقم المسجل في أقل من 30 دقيقة.</span>
-        </div>
-
-        <div class="checklist-item">
-          <span class="checklist-check">✓</span>
-          <span><strong>تحضير المعطيات:</strong> حدد اللغات المستهدفة (الألمانية، الفرنسية، الإنجليزية) والعدد المطلوب للأفواج القادمة.</span>
-        </div>
-
-        <div class="checklist-item">
-          <span class="checklist-check">✓</span>
-          <span><strong>جلسة العمل:</strong> مدة الجلسة 20 دقيقة، مركزة ومجانية 100% لتشخيص وضعية المركز وتقديم حلول عملية.</span>
+        <h2 class="checklist-title">
+          <span id="checklistTitleText">الخطوات الموالية:</span>
+        </h2>
+        <div id="checklistItemsWrap">
+          <!-- Filled dynamically via JavaScript -->
         </div>
       </div>
 
-      <!-- Return link -->
-      <div style="margin-top: 24px;">
-        <a href="./" onclick="if(location.protocol==='file:'){this.href='index.html';}" style="color: var(--text-muted); font-size: 0.88rem; text-decoration: none;">
-          ← الرجوع إلى الصفحة الرئيسية
+      <!-- Action Navigation Buttons -->
+      <div class="actions-footer-bar">
+        <a href="camera-securite.html" class="btn-home-return" id="btnReturnHome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>الرجوع إلى الصفحة الرئيسية</span>
         </a>
       </div>
 
@@ -130,38 +106,270 @@
 
   </div>
 
+  <!-- Dynamic Router Logic (Camera Security vs. Language Center) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      let booking = {};
-      
+      // 1. Determine Source
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramSource = urlParams.get('source');
+
+      let securityData = null;
+      let languageData = null;
+      let storedReturnPage = null;
+      let lastSource = null;
+
       try {
-        const stored = localStorage.getItem('prospectBooking') || sessionStorage.getItem('najah_current_lead') || localStorage.getItem('najah_last_booking');
-        if (stored) {
-          booking = JSON.parse(stored);
-        }
-      } catch (e) {
-        console.warn('Storage parsing error:', e);
+        storedReturnPage = localStorage.getItem('leadFormReturnPage');
+        lastSource = localStorage.getItem('lastLeadSource');
+
+        const secRaw = localStorage.getItem('cctvLeadData') || localStorage.getItem('securityLeadData');
+        if (secRaw) securityData = JSON.parse(secRaw);
+
+        const langRaw = localStorage.getItem('prospectBooking') || sessionStorage.getItem('najah_current_lead') || localStorage.getItem('najah_last_booking');
+        if (langRaw) languageData = JSON.parse(langRaw);
+      } catch (err) {
+        console.warn('Storage parsing error:', err);
       }
 
-      const urlParams = new URLSearchParams(window.location.search);
+      // Priority: Query param -> Referrer -> Stored source/page -> LocalStorage data
+      let isCamera = false;
+      if (paramSource === 'camera') {
+        isCamera = true;
+      } else if (paramSource === 'langue' || paramSource === 'language') {
+        isCamera = false;
+      } else if (document.referrer && document.referrer.includes('camera-securite')) {
+        isCamera = true;
+      } else if (document.referrer && document.referrer.includes('centre-de-langue')) {
+        isCamera = false;
+      } else if (lastSource === 'camera') {
+        isCamera = true;
+      } else if (lastSource === 'langue') {
+        isCamera = false;
+      } else if (storedReturnPage && storedReturnPage.includes('camera-securite')) {
+        isCamera = true;
+      } else if (securityData && !languageData) {
+        isCamera = true;
+      }
 
-      const name = booking.fullName || urlParams.get('name') || 'المدير المحترم';
-      const centerType = booking.centerType || booking.formationType || urlParams.get('center') || 'مركز لغات';
-      const city = booking.city || urlParams.get('city') || 'المغرب';
-      const phone = booking.phone || urlParams.get('phone') || '-';
-      const email = booking.email || urlParams.get('email') || '-';
+      // Determine return target page where user filled the form
+      let returnTarget = isCamera ? 'camera-securite.html' : 'centre-de-langue.html';
+      if (paramSource === 'camera') {
+        returnTarget = 'camera-securite.html';
+      } else if (paramSource === 'langue' || paramSource === 'language') {
+        returnTarget = 'centre-de-langue.html';
+      } else if (storedReturnPage) {
+        returnTarget = storedReturnPage;
+      } else if (document.referrer && (document.referrer.includes('camera-securite.html') || document.referrer.includes('centre-de-langue.html'))) {
+        returnTarget = document.referrer;
+      }
 
-      const elName = document.getElementById('displayFullName');
-      const elCenter = document.getElementById('displayCenterType');
-      const elCity = document.getElementById('displayCity');
-      const elPhone = document.getElementById('displayPhone');
-      const elEmail = document.getElementById('displayEmail');
+      // Elements
+      const sourcePill = document.getElementById('sourcePill');
+      const sourcePillText = document.getElementById('sourcePillText');
+      const thankyouTitle = document.getElementById('thankyouTitle');
+      const thankyouSubtext = document.getElementById('thankyouSubtext');
+      const detailsHeaderTitle = document.getElementById('detailsHeaderTitle');
+      const detailsStatusTag = document.getElementById('detailsStatusTag');
+      const detailsDataGrid = document.getElementById('detailsDataGrid');
+      const checklistTitleText = document.getElementById('checklistTitleText');
+      const checklistItemsWrap = document.getElementById('checklistItemsWrap');
+      const btnReturnHome = document.getElementById('btnReturnHome');
 
-      if (elName) elName.textContent = name;
-      if (elCenter) elCenter.textContent = centerType;
-      if (elCity) elCity.textContent = city;
-      if (elPhone) elPhone.textContent = phone;
-      if (elEmail) elEmail.textContent = email;
+      if (btnReturnHome) {
+        btnReturnHome.setAttribute('href', returnTarget);
+        btnReturnHome.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = returnTarget;
+        });
+      }
+
+      if (isCamera) {
+        /* ==========================================================================
+           CAMERA SECURITY INSTALLER CONFIRMATION
+           ========================================================================== */
+        document.title = 'تم استلام طلب الشراكة وتأهيل مشروعك بنجاح | رضا حمود';
+
+        sourcePill.classList.add('theme-camera');
+        sourcePillText.textContent = 'شراكة توريد مشاريع كاميرات المراقبة B2B';
+        detailsStatusTag.textContent = 'طلب مؤهل ومسجل';
+
+        // Content
+        thankyouTitle.textContent = 'تم استلام طلب الشراكة وتأهيل مشروعك بنجاح';
+        thankyouSubtext.textContent = 'غادي نتواصلو معاك فالواتساب فـ أقل من ساعتين لمناقشة حجم المشاريع وتأكيد الحصرية لمقاولتك في منطقتك.';
+
+        detailsHeaderTitle.textContent = 'معلومات المقاولة المسجلة:';
+
+        // Resolve applicant data
+        const applicantName = securityData?.fullName || urlParams.get('name') || 'المقاول المحترم';
+        const applicantCompany = securityData?.businessName || securityData?.companyName || urlParams.get('company') || 'شركة تركيب كاميرات';
+        const applicantCity = securityData?.primaryCity || securityData?.city || urlParams.get('city') || 'المغرب';
+
+        let coverageCity = '';
+        if (Array.isArray(securityData?.coverageCities) && securityData.coverageCities.length > 0) {
+          coverageCity = securityData.coverageCities.filter(c => c !== 'أخرى').join('، ');
+          if (securityData?.citiesOther) {
+            coverageCity += (coverageCity ? '، ' : '') + securityData.citiesOther;
+          }
+        } else {
+          coverageCity = securityData?.coverageCitiesText || applicantCity;
+        }
+
+        let projectTypes = '';
+        if (Array.isArray(securityData?.projectTypes) && securityData.projectTypes.length > 0) {
+          projectTypes = securityData.projectTypes.filter(p => p !== 'أخرى').join('، ');
+          if (securityData?.projectTypesOther) {
+            projectTypes += (projectTypes ? '، ' : '') + securityData.projectTypesOther;
+          }
+        } else {
+          projectTypes = securityData?.projectFocusText || (Array.isArray(securityData?.projectFocus) ? securityData.projectFocus.join('، ') : 'مستودعات، مصانع، وفيلات فاخرة');
+        }
+
+        const teamSize = securityData?.teamCapacity || 'فريق تقني مؤهل';
+        const adBudget = securityData?.adBudget || 'ميزانية B2B مقترحة';
+        const salesProcess = securityData?.responseTime || securityData?.salesAlignment || 'جاهزية للمتابعة السريعة';
+        const phone = securityData?.phone || urlParams.get('phone') || '-';
+
+        // Populate Data Grid
+        detailsDataGrid.innerHTML = `
+          <div class="details-row">
+            <span class="details-label">المسؤول والمقاولة:</span>
+            <span class="details-val">${applicantName} • ${applicantCompany}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">المدينة الرئيسية:</span>
+            <span class="details-val">${applicantCity}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">مناطق ومدن التغطية:</span>
+            <span class="details-val highlight-emerald">${coverageCity}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">نوعية المشاريع المطلوبة:</span>
+            <span class="details-val">${projectTypes}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">حجم الفرق التقنية:</span>
+            <span class="details-val">${teamSize}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">الميزانية الإعلانية المقترحة:</span>
+            <span class="details-val">${adBudget}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">سرعة المتابعة التجارية:</span>
+            <span class="details-val">${salesProcess}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">رقم الواتساب المهني:</span>
+            <span class="details-val val-phone highlight-emerald">${phone}</span>
+          </div>
+        `;
+
+        // Checklist for Camera
+        checklistTitleText.textContent = 'الخطوات الموالية لاعتماد شراكتك:';
+        checklistItemsWrap.innerHTML = `
+          <div class="checklist-item">
+            <span class="checklist-check step-number">1</span>
+            <div>
+              <strong>مراجعة الحصرية الجغرافية:</strong> التحقق من توفر منطقة التغطية في مدينتك والتأكد من عدم وجود مقاول شريك مسبق.
+            </div>
+          </div>
+          <div class="checklist-item">
+            <span class="checklist-check step-number">2</span>
+            <div>
+              <strong>مكالمة التنسيق المباشرة (20 دقيقة):</strong> سنتواصل معك عبر الواتساب في أقل من ساعتين لتشخيص حجم المشاريع وتحديد أولويات التوريد.
+            </div>
+          </div>
+          <div class="checklist-item">
+            <span class="checklist-check step-number">3</span>
+            <div>
+              <strong>تفعيل توريد الزيارات الميدانية:</strong> البدء في توجيه طلبات المعاينة التقنية المؤهلة (Visites Techniques) مع أصحاب القرار مباشرة إلى هاتفك.
+            </div>
+          </div>
+        `;
+
+      } else {
+        /* ==========================================================================
+           LANGUAGE CENTER CONFIRMATION
+           ========================================================================== */
+        document.title = 'تم تأكيد موعدك بنجاح | رضا حمود';
+
+        sourcePill.classList.remove('theme-camera');
+        sourcePillText.textContent = 'استشارة ملء أفواج مراكز اللغات';
+        detailsStatusTag.textContent = 'موعد مؤكد';
+
+        thankyouTitle.textContent = 'تم تأكيد موعد الاستشارة ديالك بنجاح';
+        thankyouSubtext.textContent = 'غادي نتواصلو معاك فالواتساب فـ أقل من 30 دقيقة باش نناقشو التفاصيل ونشاركو معاك خطة العمل التشخيصية.';
+
+        detailsHeaderTitle.textContent = 'تفاصيل الموعد المسجل:';
+
+        // Resolve language center lead data
+        const clientName = languageData?.fullName || languageData?.prospectName || urlParams.get('name') || 'المدير المحترم';
+        const centerName = languageData?.centerType || languageData?.formationType || languageData?.businessName || urlParams.get('center') || 'مركز لغات وتكوين';
+        const centerCity = languageData?.city || urlParams.get('city') || 'المغرب';
+        const clientPhone = languageData?.phone || urlParams.get('phone') || '-';
+
+        // Format appointment date & time
+        let displayDate = languageData?.selectedDate || 'خلال 24 ساعة';
+        let displayTime = languageData?.selectedTime || '20 دقيقة تشخيصية';
+
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+        displayDate = tomorrow.toLocaleDateString('ar-MA', dateOptions);
+        displayTime = 'مكالمة تشخيصية مركّزة (20 دقيقة)';
+
+        detailsDataGrid.innerHTML = `
+          <div class="details-row">
+            <span class="details-label">اسم المسؤول:</span>
+            <span class="details-val">${clientName}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">نوع المركز / التكوين:</span>
+            <span class="details-val">${centerName}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">المدينة:</span>
+            <span class="details-val">${centerCity}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">الموعد المقترح:</span>
+            <span class="details-val highlight-emerald">${displayDate}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">التوقيت والمدة:</span>
+            <span class="details-val highlight-emerald">${displayTime}</span>
+          </div>
+          <div class="details-row">
+            <span class="details-label">رقم الواتساب:</span>
+            <span class="details-val val-phone highlight-emerald">${clientPhone}</span>
+          </div>
+        `;
+
+        // 3-Point Language Center Briefing Checklist
+        checklistTitleText.textContent = 'دليل التحضير لجلسة العمل (3 نقاط رئيسية):';
+        checklistItemsWrap.innerHTML = `
+          <div class="checklist-item">
+            <span class="checklist-check step-number">1</span>
+            <div>
+              <strong>تأكيد الواتساب:</strong> المستشار المكلف غادي يتواصل معاك عبر الرقم المسجل في أقل من 30 دقيقة لتأكيد الوقت الأنسب للمكالمة.
+            </div>
+          </div>
+          <div class="checklist-item">
+            <span class="checklist-check step-number">2</span>
+            <div>
+              <strong>تحضير المعطيات:</strong> حدد اللغات ذات الأولوية لمركزك (الألمانية، الفرنسية، الإنجليزية، أو التكوين المهني) والعدد المستهدف لملء الأفواج.
+            </div>
+          </div>
+          <div class="checklist-item">
+            <span class="checklist-check step-number">3</span>
+            <div>
+              <strong>جلسة عمل تشخيصية:</strong> مدة الجلسة 20 دقيقة، مجانية 100%، نحدد فيها أسباب ضياع الزبناء واستراتيجية الإعلانات الممولة المناسبة لمدينتك.
+            </div>
+          </div>
+        `;
+      }
     });
   </script>
 </body>
