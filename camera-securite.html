@@ -180,18 +180,18 @@
           <!-- Progress bar & step indicator -->
           <div class="form-progress-wrap">
             <div class="progress-info-row">
-              <span class="step-indicator-text" id="stepIndicatorText">المرحلة 1 من 6</span>
-              <span class="step-percentage-text" id="stepPercentageText">17%</span>
+              <span class="step-indicator-text" id="stepIndicatorText">المرحلة 1 من 7</span>
+              <span class="step-percentage-text" id="stepPercentageText">14%</span>
             </div>
             <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="progressBarFill" style="width: 17%;"></div>
+              <div class="progress-bar-fill" id="progressBarFill" style="width: 14%;"></div>
             </div>
           </div>
 
           <!-- Step 1: Project Selection (Filtre نوعية المشاريع) -->
           <div class="form-step active" data-step="1">
             <div class="step-header-box">
-              <span class="step-badge">السؤال 1 من 6</span>
+              <span class="step-badge">السؤال 1 من 7</span>
               <h4 class="step-question-title">شنو هي نوعية المشاريع اللي كتركز عليها شركتكم وبغيتو تجيبو منها طلبات أكثر؟</h4>
               <p class="step-question-desc">حدد تخصص شركتك (يمكنك اختيار خيار واحد أو عدة خيارات حسب قدراتكم التقنية):</p>
             </div>
@@ -261,7 +261,7 @@
           <!-- Step 2: Operational Capacity (القدرة التشغيلية - فرق التركيب) -->
           <div class="form-step" data-step="2">
             <div class="step-header-box">
-              <span class="step-badge">السؤال 2 من 6</span>
+              <span class="step-badge">السؤال 2 من 7</span>
               <h4 class="step-question-title">القدرة التشغيلية وحجم الفرق التقنية</h4>
               <p class="step-question-desc">شحال من فريق تركيب وتقنيين (Équipes d'installation) متوفرين عندكم حالياً؟</p>
             </div>
@@ -307,7 +307,7 @@
           <!-- Step 3: Geographic Coverage (مناطق ومدن التغطية - خيارات متعددة منفصلة) -->
           <div class="form-step" data-step="3">
             <div class="step-header-box">
-              <span class="step-badge">السؤال 3 من 6</span>
+              <span class="step-badge">السؤال 3 من 7</span>
               <h4 class="step-question-title">شنو هي المدينة الرئيسية ومناطق التغطية اللي تقدروا ديرو فيها معاينة ميدانية (Visite technique)؟</h4>
               <p class="step-question-desc">حدد جميع المدن والمناطق التي تستطيعون التنقل إليها لإجراء المعاينة الميدانية (يمكنك اختيار عدة مدن):</p>
             </div>
@@ -426,10 +426,56 @@
             </div>
           </div>
 
-          <!-- Step 4: Monthly Ad Budget (الميزانية الإعلانية الشهرية المقترحة) -->
+          <!-- Step 4: Social Media Advertising Experience (التجربة السابقة مع الإعلانات الممولة) -->
           <div class="form-step" data-step="4">
             <div class="step-header-box">
-              <span class="step-badge">السؤال 4 من 6</span>
+              <span class="step-badge">السؤال 4 من 7</span>
+              <h4 class="step-question-title">واش فايت ليكم خدمتو بالإعلانات الممولة فـ مواقع التواصل الاجتماعي (Social Media Ads)؟</h4>
+              <p class="step-question-desc">حدد تجربتكم السابقة مع إعلانات الفيسبوك، إنستغرام أو غيرها لجلب مشاريع الكاميرات:</p>
+            </div>
+
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="social_ads" value="نعم، كنطلقو إعلانات ممولة بانتظام (Facebook / Instagram)">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">نعم، كنطلقو إعلانات ممولة بانتظام (Facebook / Instagram)</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="social_ads" value="نعم، جربنا ولكن بدون نتائج مرضية أو بدون متابعة">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">نعم، جربنا ولكن بدون نتائج مرضية أو بدون متابعة</span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="social_ads" value="لا، ما عمرنا درنا إعلانات ممولة فـ السوشيال ميديا">
+                <div class="option-content">
+                  <span class="option-indicator"></span>
+                  <span class="option-label">لا، ما عمرنا درنا إعلانات ممولة فـ السوشيال ميديا (كنعتمدو فقط على المعارف)</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="3">
+                <span class="btn-arrow">→</span>
+                <span>السابق</span>
+              </button>
+              <button type="button" class="step-btn next-btn" data-next="5">
+                <span>المتابعة للمرحلة التالية</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 5: Monthly Ad Budget (الميزانية الإعلانية الشهرية المقترحة) -->
+          <div class="form-step" data-step="5">
+            <div class="step-header-box">
+              <span class="step-badge">السؤال 5 من 7</span>
               <h4 class="step-question-title">شحال هي الميزانية الإعلانية الشهرية المقترحة لمشروعكم؟</h4>
               <p class="step-question-desc">حدد الميزانية الشهرية المقترحة لحملاتكم التسويقية:</p>
             </div>
@@ -469,21 +515,21 @@
             </div>
 
             <div class="step-actions">
-              <button type="button" class="step-btn prev-btn" data-prev="3">
+              <button type="button" class="step-btn prev-btn" data-prev="4">
                 <span class="btn-arrow">→</span>
                 <span>السابق</span>
               </button>
-              <button type="button" class="step-btn next-btn" data-next="5">
+              <button type="button" class="step-btn next-btn" data-next="6">
                 <span>المتابعة للمرحلة التالية</span>
                 <span class="btn-arrow">←</span>
               </button>
             </div>
           </div>
 
-          <!-- Step 5: Sales Process Alignment (المتابعة التجارية وسرعة التواصل) -->
-          <div class="form-step" data-step="5">
+          <!-- Step 6: Sales Process Alignment (المتابعة التجارية وسرعة التواصل) -->
+          <div class="form-step" data-step="6">
             <div class="step-header-box">
-              <span class="step-badge">السؤال 5 من 6</span>
+              <span class="step-badge">السؤال 6 من 7</span>
               <h4 class="step-question-title">المتابعة التجارية وسرعة التواصل مع الزبناء</h4>
               <p class="step-question-desc">حنا كنوفروا ليك نظام إعلاني احترافي كيجيب ليك طلبات مؤهلة، واش عندكم مسؤول تجاري مستعد يتواصل مع الزبون ويدير المعاينة فـ أقل من ساعتين؟</p>
             </div>
@@ -507,21 +553,21 @@
             </div>
 
             <div class="step-actions">
-              <button type="button" class="step-btn prev-btn" data-prev="4">
+              <button type="button" class="step-btn prev-btn" data-prev="5">
                 <span class="btn-arrow">→</span>
                 <span>السابق</span>
               </button>
-              <button type="button" class="step-btn next-btn" data-next="6">
+              <button type="button" class="step-btn next-btn" data-next="7">
                 <span>المتابعة للمرحلة الأخيرة</span>
                 <span class="btn-arrow">←</span>
               </button>
             </div>
           </div>
 
-          <!-- Step 6: Contact Details & Strategic Session (معلومات المسؤول وحجز الموعد) -->
-          <div class="form-step" data-step="6">
+          <!-- Step 7: Contact Details & Strategic Session (معلومات المسؤول وحجز الموعد) -->
+          <div class="form-step" data-step="7">
             <div class="step-header-box">
-              <span class="step-badge">المرحلة 6 من 6</span>
+              <span class="step-badge">المرحلة 7 من 7</span>
               <h4 class="step-question-title">معلومات المسؤول وحجز موعد دراسة المشروع</h4>
               <p class="step-question-desc">عمر المعطيات أسفله باش نتواصلو معاك لمناقشة جدوى المشروع وتأكيد الحصرية في منطقتك:</p>
             </div>
@@ -555,6 +601,15 @@
                   <span class="phone-country-code">+212</span>
                   <input type="tel" id="installerPhone" class="form-input phone-input" placeholder="06 61 00 00 00" required>
                 </div>
+              </div>
+
+              <!-- Gmail / Email (Optional) -->
+              <div class="form-group">
+                <label for="installerEmail" class="form-label">
+                  <span>البريد الإلكتروني / Gmail</span>
+                  <span class="optional-tag">(اختياري)</span>
+                </label>
+                <input type="email" id="installerEmail" class="form-input" placeholder="مثال: contact@entreprise.ma أو nom@gmail.com" dir="ltr" style="text-align: right;">
               </div>
 
               <!-- City Dropdown with separated cities -->
@@ -591,7 +646,7 @@
             </div>
 
             <div class="step-actions">
-              <button type="button" class="step-btn prev-btn" data-prev="5">
+              <button type="button" class="step-btn prev-btn" data-prev="6">
                 <span class="btn-arrow">→</span>
                 <span>السابق</span>
               </button>

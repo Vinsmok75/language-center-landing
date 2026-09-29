@@ -789,6 +789,13 @@ body {
   font-weight: 900;
 }
 
+.form-label .optional-tag {
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
 .form-input,
 .form-select {
   width: 100%;

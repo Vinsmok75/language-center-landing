@@ -225,9 +225,11 @@
         }
 
         const teamSize = securityData?.teamCapacity || 'فريق تقني مؤهل';
+        const socialAds = securityData?.socialAds || securityData?.adExperience || '';
         const adBudget = securityData?.adBudget || 'ميزانية B2B مقترحة';
         const salesProcess = securityData?.responseTime || securityData?.salesAlignment || 'جاهزية للمتابعة السريعة';
         const phone = securityData?.phone || urlParams.get('phone') || '-';
+        const email = securityData?.email || urlParams.get('email') || '';
 
         // Populate Data Grid
         detailsDataGrid.innerHTML = `
@@ -251,6 +253,11 @@
             <span class="details-label">حجم الفرق التقنية:</span>
             <span class="details-val">${teamSize}</span>
           </div>
+          ${socialAds ? `
+          <div class="details-row">
+            <span class="details-label">إعلانات السوشيال ميديا:</span>
+            <span class="details-val">${socialAds}</span>
+          </div>` : ''}
           <div class="details-row">
             <span class="details-label">الميزانية الإعلانية المقترحة:</span>
             <span class="details-val">${adBudget}</span>
@@ -259,6 +266,11 @@
             <span class="details-label">سرعة المتابعة التجارية:</span>
             <span class="details-val">${salesProcess}</span>
           </div>
+          ${email ? `
+          <div class="details-row">
+            <span class="details-label">البريد الإلكتروني / Gmail:</span>
+            <span class="details-val">${email}</span>
+          </div>` : ''}
           <div class="details-row">
             <span class="details-label">رقم الواتساب المهني:</span>
             <span class="details-val val-phone highlight-emerald">${phone}</span>

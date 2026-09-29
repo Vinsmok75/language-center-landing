@@ -168,13 +168,18 @@ function doPost(e) {
     var email = payload.email || "";
     var activeDuration = payload.activeDuration || payload.active_duration || "";
     var studentsPerMonth = payload.studentsPerMonth || payload.students_per_month || "";
-    var adExperience = payload.adExperience || payload.ad_experience || "";
+    var adExperience = payload.adExperience || payload.ad_experience || payload.socialAds || payload.social_ads || "";
 
     var notesParts = [];
     if (email) notesParts.push("📧 Email: " + email);
     if (activeDuration) notesParts.push("⏳ Ancienneté: " + activeDuration);
     if (studentsPerMonth) notesParts.push("👥 Élèves/mois: " + studentsPerMonth);
     if (adExperience) notesParts.push("📢 Publicité: " + adExperience);
+    if (payload.adBudget) notesParts.push("💰 Budget: " + payload.adBudget);
+    if (payload.teamCapacity) notesParts.push("🛠️ Équipes: " + payload.teamCapacity);
+    if (payload.projectFocusText) notesParts.push("🎯 Projets: " + payload.projectFocusText);
+    if (payload.coverageCitiesText) notesParts.push("📍 Villes: " + payload.coverageCitiesText);
+    if (payload.salesAlignment) notesParts.push("⏱️ Réactivité: " + payload.salesAlignment);
     if (payload.customNotes) notesParts.push("📝 Notes: " + payload.customNotes);
 
     var notes = notesParts.join(" | ");

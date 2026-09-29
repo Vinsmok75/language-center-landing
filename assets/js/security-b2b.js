@@ -205,8 +205,18 @@ function initMultiStepSecurityForm() {
       return true;
     }
 
-    // Step 4: Ad Budget
+    // Step 4: Social Media Ads Experience
     if (stepNumber === 4) {
+      const checkedAds = stepElem.querySelector('input[name="social_ads"]:checked');
+      if (!checkedAds) {
+        triggerStepError(stepElem, 'يرجى تحديد ما إذا كنتم قد استخدمتم الإعلانات الممولة على مواقع التواصل الاجتماعي من قبل.');
+        return false;
+      }
+      return true;
+    }
+
+    // Step 5: Ad Budget
+    if (stepNumber === 5) {
       const checkedBudget = stepElem.querySelector('input[name="ad_budget"]:checked');
       if (!checkedBudget) {
         triggerStepError(stepElem, 'يرجى تحديد الميزانية الإعلانية الشهرية المقترحة لمشروعكم.');
@@ -215,8 +225,8 @@ function initMultiStepSecurityForm() {
       return true;
     }
 
-    // Step 5: Sales Process Alignment
-    if (stepNumber === 5) {
+    // Step 6: Sales Process Alignment
+    if (stepNumber === 6) {
       const checkedSales = stepElem.querySelector('input[name="sales_process"]:checked');
       if (!checkedSales) {
         triggerStepError(stepElem, 'يرجى تحديد مدى جاهزية فريقكم للتواصل وإجراء المعاينة فـ أقل من ساعتين.');
@@ -248,25 +258,34 @@ function initMultiStepSecurityForm() {
   });
 
   /**
-   * Final Form Submission (Step 6)
+   * Final Form Submission (Step 7)
    */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAlert();
 
-    const step6Elem = document.querySelector('.form-step[data-step="6"]');
+    const step7Elem = document.querySelector('.form-step[data-step="7"]') || document.querySelector('.form-step[data-step="6"]');
     const fullName = document.getElementById('installerName')?.value.trim() || '';
     const businessName = document.getElementById('installerCompany')?.value.trim() || '';
     const phone = document.getElementById('installerPhone')?.value.trim() || '';
+    const email = document.getElementById('installerEmail')?.value.trim() || '';
     let primaryCity = installerCity ? installerCity.value : '';
 
     if (primaryCity === 'مدينة أخرى' && cityAutreInput && cityAutreInput.value.trim()) {
       primaryCity = cityAutreInput.value.trim();
     }
 
-    // Validate Required Fields in Step 6
+    // Validate Required Fields in Step 7
     if (!fullName || !businessName || !phone || !primaryCity) {
-      triggerStepError(step6Elem, 'يرجى ملء جميع معلومات المسؤول والشركة لاكتمال الطلب.');
+      triggerStepError(step7Elem, 'يرجى ملء جميع معلومات المسؤول والشركة لاكتمال الطلب.');
+      return;
+    }
+
+    // Optional Email Validation (validates format only if user typed an email)
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      triggerStepError(step7Elem, 'يرجى إدخال بريد إلكتروني صحيح (مثال: exemple@gmail.com) أو تركه فارغاً.');
+      const emailInput = document.getElementById('installerEmail');
+      if (emailInput) emailInput.focus();
       return;
     }
 
@@ -279,7 +298,7 @@ function initMultiStepSecurityForm() {
     const moroccanPhoneRegex = /^(?:0|\+212)[5-7]\d{8}$/;
 
     if (!moroccanPhoneRegex.test(normalizedPhone)) {
-      triggerStepError(step6Elem, 'يرجى إدخال رقم واتساب مغربي مهني صحيح (مثال: 0661000000 أو 0700000000).');
+      triggerStepError(step7Elem, 'يرجى إدخال رقم واتساب مغربي مهني صحيح (مثال: 0661000000 أو 0700000000).');
       const phoneInput = document.getElementById('installerPhone');
       if (phoneInput) phoneInput.focus();
       return;
@@ -302,10 +321,13 @@ function initMultiStepSecurityForm() {
     });
     const citiesOther = (cityCoverageAutreCheckbox && cityCoverageAutreCheckbox.checked && cityCoverageAutreInput) ? cityCoverageAutreInput.value.trim() : '';
 
-    // Step 4: adBudget (Selected radio value)
+    // Step 4: socialAds (Selected radio value)
+    const socialAds = document.querySelector('input[name="social_ads"]:checked')?.value || 'غير محدد';
+
+    // Step 5: adBudget (Selected radio value)
     const adBudget = document.querySelector('input[name="ad_budget"]:checked')?.value || 'غير محدد';
 
-    // Step 5: responseTime (Selected radio value)
+    // Step 6: responseTime (Selected radio value)
     const responseTime = document.querySelector('input[name="sales_process"]:checked')?.value || 'غير محدد';
 
     // Exact Payload Structure according to Data Extraction Contract
@@ -315,12 +337,15 @@ function initMultiStepSecurityForm() {
       teamCapacity,
       coverageCities,
       citiesOther,
+      socialAds,
+      adExperience: socialAds,
       adBudget,
       responseTime,
       fullName,
       businessName,
       companyName: businessName,
       phone: normalizedPhone,
+      email: email,
       primaryCity,
       city: primaryCity,
       projectFocus: projectTypes,
@@ -329,6 +354,7 @@ function initMultiStepSecurityForm() {
       salesAlignment: responseTime,
       source: 'camera',
       sourceLabel: 'أنظمة كاميرات المراقبة B2B',
+      notes: `[كاميرات B2B] [البريد: ${email || 'غير محدد'}] [إعلانات سابقة: ${socialAds}] [الميزانية: ${adBudget}] [الفرق: ${teamCapacity}] [التغطية: ${coverageCities.join(', ')}] [المتابعة: ${responseTime}]`,
       submittedAt: new Date().toISOString()
     };
 
