@@ -169,9 +169,11 @@ function doPost(e) {
     var activeDuration = payload.activeDuration || payload.active_duration || "";
     var studentsPerMonth = payload.studentsPerMonth || payload.students_per_month || "";
     var adExperience = payload.adExperience || payload.ad_experience || payload.socialAds || payload.social_ads || "";
+    var callTiming = payload.callTiming || payload.call_timing || payload.bestTime || payload.creneau || "";
 
     var notesParts = [];
     if (email) notesParts.push("📧 Email: " + email);
+    if (callTiming) notesParts.push("🕒 Créneau d'échange: " + callTiming);
     if (activeDuration) notesParts.push("⏳ Ancienneté: " + activeDuration);
     if (studentsPerMonth) notesParts.push("👥 Élèves/mois: " + studentsPerMonth);
     if (adExperience) notesParts.push("📢 Publicité: " + adExperience);
@@ -250,6 +252,7 @@ function testAddLead() {
         activeDuration: "1 - 3 ans",
         studentsPerMonth: "30 - 50",
         adExperience: "Oui, régulièrement",
+        callTiming: "entre 12h et 15h",
         etape: "Nouveau Lead",
         probabilite: "20%",
         meetLink: ""

@@ -353,6 +353,11 @@
             <span class="details-label">التوقيت والمدة:</span>
             <span class="details-val highlight-emerald">${displayTime}</span>
           </div>
+          ${languageData?.callTiming ? `
+          <div class="details-row">
+            <span class="details-label">توقيت الاتصال المفضل:</span>
+            <span class="details-val highlight-emerald">${languageData.callTiming}</span>
+          </div>` : ''}
           <div class="details-row">
             <span class="details-label">رقم الواتساب:</span>
             <span class="details-val val-phone highlight-emerald">${clientPhone}</span>

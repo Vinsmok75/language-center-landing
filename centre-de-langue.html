@@ -52,6 +52,9 @@
         <div class="target-pill">
           <span>عرض خاص بمدراء ومؤسسي مراكز اللغات والدعم</span>
         </div>
+        <div class="service-notice-pill">
+          <span>Service 100% en ligne, pour centres déjà ouverts uniquement</span>
+        </div>
       </div>
 
       <!-- 3. THE BIG PAIN HEADLINE -->
@@ -127,11 +130,18 @@
       <!-- 8. MULTI-STEP DIAGNOSTIC FORM SECTION -->
       <section class="booking-main-wrapper" id="bookingSection">
         <div class="booking-header">
-          <h3 class="booking-title">حجز جلسة عمل تشخيصية بالمجان (20 دقيقة)</h3>
           <div class="scarcity-pill">
-            <span>باقي فقط 3 مقاعد استشارية مجانية لهاد الأسبوع</span>
+            <span class="scarcity-pulse-dot"></span>
+            <span>باقي فقط 3 مقاعد استشارية مجانية لهذا الأسبوع</span>
           </div>
+          <div class="service-notice-banner">
+            <span>Service 100% en ligne, pour centres déjà ouverts uniquement</span>
+          </div>
+          <h3 class="booking-title">حجز جلسة عمل تشخيصية بالمجان (20 دقيقة)</h3>
         </div>
+
+        <!-- Inline Status & Validation Alert Box -->
+        <div class="form-status-alert" id="formAlertBox"></div>
 
         <!-- Multi-Step Form Container -->
         <form id="consultationForm" class="multistep-form-container" novalidate>
@@ -139,18 +149,48 @@
           <!-- Progress bar & step indicator -->
           <div class="form-progress-wrap">
             <div class="progress-info-row">
-              <span class="step-indicator-text" id="stepIndicatorText">Étape 1 sur 5</span>
-              <span class="step-percentage-text" id="stepPercentageText">20%</span>
+              <span class="step-indicator-text" id="stepIndicatorText">
+                <span>Étape 1 sur 6</span>
+              </span>
+              <span class="step-percentage-text" id="stepPercentageText">17%</span>
             </div>
             <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="progressBarFill" style="width: 20%;"></div>
+              <div class="progress-bar-fill" id="progressBarFill" style="width: 17%;"></div>
+            </div>
+
+            <!-- Milestone Stepper Track -->
+            <div class="milestones-stepper">
+              <div class="milestone-item active" data-milestone="1">
+                <span class="milestone-num">1</span>
+                <span class="milestone-label">Type</span>
+              </div>
+              <div class="milestone-item" data-milestone="2">
+                <span class="milestone-num">2</span>
+                <span class="milestone-label">Ancienneté</span>
+              </div>
+              <div class="milestone-item" data-milestone="3">
+                <span class="milestone-num">3</span>
+                <span class="milestone-label">Élèves</span>
+              </div>
+              <div class="milestone-item" data-milestone="4">
+                <span class="milestone-num">4</span>
+                <span class="milestone-label">Publicité</span>
+              </div>
+              <div class="milestone-item" data-milestone="5">
+                <span class="milestone-num">5</span>
+                <span class="milestone-label">Créneau</span>
+              </div>
+              <div class="milestone-item" data-milestone="6">
+                <span class="milestone-num">6</span>
+                <span class="milestone-label">Contact</span>
+              </div>
             </div>
           </div>
 
           <!-- Step 1: Question 1 -->
           <div class="form-step active" data-step="1">
             <div class="step-header-box">
-              <span class="step-badge">Question 1 sur 5</span>
+              <span class="step-badge">Question 1 sur 6</span>
               <h4 class="step-question-title">Quel type de centre gérez-vous ?</h4>
             </div>
 
@@ -158,40 +198,40 @@
               <label class="option-card">
                 <input type="radio" name="center_type" value="Centre de langues" required>
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Centre de langues</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card">
                 <input type="radio" name="center_type" value="Centre de formation professionnelle">
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Centre de formation professionnelle</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card">
                 <input type="radio" name="center_type" value="Soutien scolaire">
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Soutien scolaire</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card">
                 <input type="radio" name="center_type" value="Formation en ligne">
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Formation en ligne</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card option-card-autre">
                 <input type="radio" name="center_type" value="Autre">
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Autre</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
             </div>
@@ -211,40 +251,40 @@
           <!-- Step 2: Question 2 -->
           <div class="form-step" data-step="2">
             <div class="step-header-box">
-              <span class="step-badge">Question 2 sur 5</span>
-              <h4 class="step-question-title">Depuis combien de temps votre centre est actif ?</h4>
+              <span class="step-badge">Question 2 sur 6</span>
+              <h4 class="step-question-title">Depuis combien de temps votre centre est-il actif ?</h4>
             </div>
 
             <div class="options-grid">
               <label class="option-card">
                 <input type="radio" name="active_duration" value="Moins de 6 mois" required>
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Moins de 6 mois</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="active_duration" value="6mois -1 an">
+                <input type="radio" name="active_duration" value="6 mois à 1 an">
                 <div class="option-content">
+                  <span class="option-label">6 mois à 1 an</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">6mois -1 an</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="active_duration" value="1 - 3 ans">
+                <input type="radio" name="active_duration" value="1 à 3 ans">
                 <div class="option-content">
+                  <span class="option-label">1 à 3 ans</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">1 - 3 ans</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="active_duration" value="+ 3 ans">
+                <input type="radio" name="active_duration" value="Plus de 3 ans">
                 <div class="option-content">
+                  <span class="option-label">Plus de 3 ans</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">+ 3 ans</span>
                 </div>
               </label>
             </div>
@@ -264,40 +304,40 @@
           <!-- Step 3: Question 3 -->
           <div class="form-step" data-step="3">
             <div class="step-header-box">
-              <span class="step-badge">Question 3 sur 5</span>
-              <h4 class="step-question-title">Combien d'eleves inscrivez-vous en moyenne par mois ?</h4>
+              <span class="step-badge">Question 3 sur 6</span>
+              <h4 class="step-question-title">Combien d'élèves inscrivez-vous en moyenne par mois ?</h4>
             </div>
 
             <div class="options-grid">
               <label class="option-card">
                 <input type="radio" name="students_per_month" value="Moins de 10" required>
                 <div class="option-content">
-                  <span class="option-indicator"></span>
                   <span class="option-label">Moins de 10</span>
+                  <span class="option-indicator"></span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="students_per_month" value="10 - 30">
+                <input type="radio" name="students_per_month" value="10 à 30">
                 <div class="option-content">
+                  <span class="option-label">10 à 30</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">10 - 30</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="students_per_month" value="30 - 50">
+                <input type="radio" name="students_per_month" value="30 à 50">
                 <div class="option-content">
+                  <span class="option-label">30 à 50</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">30 - 50</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="students_per_month" value="+50">
+                <input type="radio" name="students_per_month" value="Plus de 50">
                 <div class="option-content">
+                  <span class="option-label">Plus de 50</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">+50</span>
                 </div>
               </label>
             </div>
@@ -317,32 +357,32 @@
           <!-- Step 4: Question 4 -->
           <div class="form-step" data-step="4">
             <div class="step-header-box">
-              <span class="step-badge">Question 4 sur 5</span>
-              <h4 class="step-question-title">Avez-vous deja investi dans la publicite (Facebook / Instagram) ?</h4>
+              <span class="step-badge">Question 4 sur 6</span>
+              <h4 class="step-question-title">Avez-vous déjà investi dans la publicité (Facebook / Instagram) ?</h4>
             </div>
 
             <div class="options-grid">
               <label class="option-card">
-                <input type="radio" name="ad_experience" value="Oui, regulierement" required>
+                <input type="radio" name="ad_experience" value="Oui, régulièrement" required>
                 <div class="option-content">
+                  <span class="option-label">Oui, régulièrement</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">Oui, regulierement</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="ad_experience" value="Oui, mais sans resultats">
+                <input type="radio" name="ad_experience" value="Oui, mais sans résultats">
                 <div class="option-content">
+                  <span class="option-label">Oui, mais sans résultats</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">Oui, mais sans resultats</span>
                 </div>
               </label>
 
               <label class="option-card">
-                <input type="radio" name="ad_experience" value="Non, Jamais">
+                <input type="radio" name="ad_experience" value="Non, jamais">
                 <div class="option-content">
+                  <span class="option-label">Non, jamais</span>
                   <span class="option-indicator"></span>
-                  <span class="option-label">Non, Jamais</span>
                 </div>
               </label>
             </div>
@@ -359,19 +399,79 @@
             </div>
           </div>
 
-          <!-- Step 5: Question 5 - Informations de contact -->
+          <!-- Step 5: Question 5 (New Step: Call Timing) -->
           <div class="form-step" data-step="5">
             <div class="step-header-box">
-              <span class="step-badge">Question 5 sur 5</span>
+              <span class="step-badge">Question 5 sur 6</span>
+              <h4 class="step-question-title">Quel serait le meilleur moment pour échanger avec notre équipe afin de discuter de votre centre ?</h4>
+            </div>
+
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="radio" name="call_timing" value="Entre 9h et 12h" required>
+                <div class="option-content">
+                  <span class="option-label">Entre 9h et 12h</span>
+                  <span class="option-indicator"></span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="call_timing" value="Entre 12h et 15h">
+                <div class="option-content">
+                  <span class="option-label">Entre 12h et 15h</span>
+                  <span class="option-indicator"></span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="call_timing" value="Entre 15h et 18h">
+                <div class="option-content">
+                  <span class="option-label">Entre 15h et 18h</span>
+                  <span class="option-indicator"></span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="call_timing" value="Après 18h">
+                <div class="option-content">
+                  <span class="option-label">Après 18h</span>
+                  <span class="option-indicator"></span>
+                </div>
+              </label>
+
+              <label class="option-card">
+                <input type="radio" name="call_timing" value="Je préfère ne pas être contacté">
+                <div class="option-content">
+                  <span class="option-label">Je préfère ne pas être contacté</span>
+                  <span class="option-indicator"></span>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="step-btn prev-btn" data-prev="4">
+                <span class="btn-arrow">→</span>
+                <span>Précédent</span>
+              </button>
+              <button type="button" class="step-btn next-btn" data-next="6">
+                <span>Suivant</span>
+                <span class="btn-arrow">←</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 6: Question 6 - Informations de contact -->
+          <div class="form-step" data-step="6">
+            <div class="step-header-box">
+              <span class="step-badge">Question 6 sur 6</span>
               <h4 class="step-question-title">Informations de contact</h4>
-              <p class="step-question-desc">Pour que nous puissions collaborer ou que je puisse vous aider au mieux, vous pouvez partager vos formations et vos compétences directement ici dans ce formulaire..</p>
             </div>
 
             <div class="contact-fields-wrap">
-              <!-- Nom complet -->
+              <!-- Nom du propriétaire ou du décideur -->
               <div class="form-group">
                 <label class="form-label" for="fullName">
-                  <span>Nom complet</span>
+                  <span>Nom du propriétaire ou du décideur</span>
                   <span class="required-star">*</span>
                 </label>
                 <input 
@@ -379,7 +479,7 @@
                   id="fullName" 
                   name="full_name" 
                   class="form-input" 
-                  placeholder="Entrez votre réponse." 
+                  placeholder="Entrez le nom du propriétaire ou du décideur..." 
                   required
                 >
               </div>
@@ -397,7 +497,7 @@
                     id="phone" 
                     name="phone" 
                     class="form-input phone-input" 
-                    placeholder="Entrez votre réponse." 
+                    placeholder="06 12 34 56 78" 
                     required
                   >
                 </div>
@@ -414,7 +514,7 @@
                   id="email" 
                   name="email" 
                   class="form-input" 
-                  placeholder="Entrez votre réponse." 
+                  placeholder="exemple@domaine.com" 
                   required
                 >
               </div>
@@ -426,14 +526,11 @@
                   <span class="required-star">*</span>
                 </label>
                 <select id="citySelect" name="city" class="form-select" required>
-                  <option value="" disabled selected>Entrez votre réponse.</option>
+                  <option value="" disabled selected>Choisissez votre ville...</option>
                   <option value="Meknès">Meknès</option>
                   <option value="Fès">Fès</option>
-                  <option value="Casablanca">Casablanca</option>
                   <option value="Rabat">Rabat</option>
-                  <option value="Tanger">Tanger</option>
-                  <option value="Agadir">Agadir</option>
-                  <option value="Marrakech">Marrakech</option>
+                  <option value="Casablanca">Casablanca</option>
                   <option value="Autre">Autre</option>
                 </select>
               </div>
@@ -448,13 +545,13 @@
                   type="text" 
                   id="cityAutreInput" 
                   class="form-input" 
-                  placeholder="Entrez votre réponse."
+                  placeholder="Entrez votre ville..."
                 >
               </div>
             </div>
 
             <div class="step-actions">
-              <button type="button" class="step-btn prev-btn" data-prev="4">
+              <button type="button" class="step-btn prev-btn" data-prev="5">
                 <span class="btn-arrow">→</span>
                 <span>Précédent</span>
               </button>

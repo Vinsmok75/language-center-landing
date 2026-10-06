@@ -1,10 +1,10 @@
 /**
- * Najah Media - CRO B2B Multi-Step Qualification Form Logic
+ * Najah Media - CRO B2B Multi-Step Qualification Form Logic (6 Steps)
  * Features:
- * 1. 5-Step Intuitive Interactive Funnel with Progress Bar & Percentage.
- * 2. Instant auto-advance on selection for single-choice questions with smooth micro-transition.
- * 3. Conditional reveal for "Autre" fields (Center Type & City).
- * 4. Robust Moroccan phone (+212) & email validation.
+ * 1. 6-Step Intuitive Interactive Funnel with Progress Bar & Milestones.
+ * 2. Instant visual highlight (.selected) and silky auto-advance on selection.
+ * 3. Conditional reveal for "Autre" field (Center Type).
+ * 4. Step 5 Call Timing & Step 6 Contact Info with City restrictions (Meknès, Fès, Rabat, Casablanca).
  * 5. Resilient Google Apps Script submission & LocalStorage persistence.
  */
 
@@ -26,8 +26,7 @@ function initFastJumpCta() {
     e.preventDefault();
     const target = document.getElementById('bookingSection');
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-      // Focus on active step
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setTimeout(() => {
         const activeStep = document.querySelector('.form-step.active');
         if (activeStep) {
@@ -53,8 +52,9 @@ function initMultiStepForm() {
   const stepIndicatorText = document.getElementById('stepIndicatorText');
   const stepPercentageText = document.getElementById('stepPercentageText');
   const progressBarFill = document.getElementById('progressBarFill');
+  const alertBox = document.getElementById('formAlertBox');
 
-  // Conditional "Autre" Elements
+  // Conditional "Autre" Elements for Center Type
   const centerTypeRadios = document.querySelectorAll('input[name="center_type"]');
   const centerTypeAutreWrap = document.getElementById('centerTypeAutreWrap');
   const centerTypeAutreInput = document.getElementById('centerTypeAutreInput');
@@ -64,12 +64,66 @@ function initMultiStepForm() {
   const cityAutreInput = document.getElementById('cityAutreInput');
 
   /**
-   * Update Progress Bar & Step Visibility
+   * Display inline alert message
+   */
+  function showAlert(message) {
+    if (!alertBox) {
+      alert(message);
+      return;
+    }
+    alertBox.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>${message}</span>
+    `;
+    alertBox.classList.add('visible');
+
+    const rect = alertBox.getBoundingClientRect();
+    if (rect.top < 40) {
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    setTimeout(() => {
+      alertBox.classList.remove('visible');
+    }, 4500);
+  }
+
+  /**
+   * Update visual .selected class on option cards
+   */
+  function updateCardSelectionState(radioInput) {
+    const groupName = radioInput.name;
+    document.querySelectorAll(`input[name="${groupName}"]`).forEach((r) => {
+      const card = r.closest('.option-card');
+      if (card) {
+        if (r.checked) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      }
+    });
+  }
+
+  // Bind selection styling on all radio cards
+  document.querySelectorAll('.option-card input[type="radio"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      updateCardSelectionState(radio);
+    });
+    if (radio.checked) {
+      const card = radio.closest('.option-card');
+      if (card) card.classList.add('selected');
+    }
+  });
+
+  /**
+   * Update Progress Bar, Milestones & Step Visibility
    */
   function goToStep(stepNumber) {
     if (stepNumber < 1 || stepNumber > totalSteps) return;
 
     currentStep = stepNumber;
+
+    if (alertBox) alertBox.classList.remove('visible');
 
     // Update active step DOM classes
     steps.forEach((stepElem) => {
@@ -81,10 +135,10 @@ function initMultiStepForm() {
       }
     });
 
-    // Update progress numbers and bar
+    // Update progress percentage
     const progressPercent = Math.round((currentStep / totalSteps) * 100);
     if (stepIndicatorText) {
-      stepIndicatorText.textContent = `Étape ${currentStep} sur ${totalSteps}`;
+      stepIndicatorText.innerHTML = `<span>Étape ${currentStep} sur ${totalSteps}</span>`;
     }
     if (stepPercentageText) {
       stepPercentageText.textContent = `${progressPercent}%`;
@@ -93,10 +147,31 @@ function initMultiStepForm() {
       progressBarFill.style.width = `${progressPercent}%`;
     }
 
-    // Scroll slightly if form is out of view
-    const formRect = form.getBoundingClientRect();
-    if (formRect.top < 20 || formRect.bottom > window.innerHeight) {
-      form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Update Milestones Stepper
+    const milestones = document.querySelectorAll('.milestone-item');
+    milestones.forEach((item) => {
+      const mStep = parseInt(item.getAttribute('data-milestone'), 10);
+      item.classList.remove('active', 'completed');
+      const numElem = item.querySelector('.milestone-num');
+
+      if (mStep === currentStep) {
+        item.classList.add('active');
+        if (numElem) numElem.textContent = mStep;
+      } else if (mStep < currentStep) {
+        item.classList.add('completed');
+        if (numElem) numElem.innerHTML = '✓';
+      } else {
+        if (numElem) numElem.textContent = mStep;
+      }
+    });
+
+    // Smooth scroll to form top
+    const formSection = document.getElementById('bookingSection');
+    if (formSection) {
+      const rect = formSection.getBoundingClientRect();
+      if (rect.top < 20 || rect.top > 250) {
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   }
 
@@ -105,7 +180,6 @@ function initMultiStepForm() {
    */
   function triggerStepError(stepElem) {
     stepElem.classList.remove('step-error-shake');
-    // Force reflow
     void stepElem.offsetWidth;
     stepElem.classList.add('step-error-shake');
     setTimeout(() => {
@@ -124,12 +198,14 @@ function initMultiStepForm() {
       const checkedRadio = stepElem.querySelector('input[name="center_type"]:checked');
       if (!checkedRadio) {
         triggerStepError(stepElem);
+        showAlert('Veuillez sélectionner votre type de centre.');
         return false;
       }
       if (checkedRadio.value === 'Autre') {
         const val = centerTypeAutreInput ? centerTypeAutreInput.value.trim() : '';
         if (!val) {
           triggerStepError(stepElem);
+          showAlert('Veuillez préciser votre type d\'activité.');
           if (centerTypeAutreInput) centerTypeAutreInput.focus();
           return false;
         }
@@ -141,6 +217,7 @@ function initMultiStepForm() {
       const checkedRadio = stepElem.querySelector('input[name="active_duration"]:checked');
       if (!checkedRadio) {
         triggerStepError(stepElem);
+        showAlert('Veuillez indiquer depuis combien de temps votre centre est actif.');
         return false;
       }
       return true;
@@ -150,6 +227,7 @@ function initMultiStepForm() {
       const checkedRadio = stepElem.querySelector('input[name="students_per_month"]:checked');
       if (!checkedRadio) {
         triggerStepError(stepElem);
+        showAlert('Veuillez sélectionner le nombre moyen d\'élèves inscrits par mois.');
         return false;
       }
       return true;
@@ -159,12 +237,23 @@ function initMultiStepForm() {
       const checkedRadio = stepElem.querySelector('input[name="ad_experience"]:checked');
       if (!checkedRadio) {
         triggerStepError(stepElem);
+        showAlert('Veuillez indiquer votre expérience avec la publicité.');
         return false;
       }
       return true;
     }
 
     if (stepNumber === 5) {
+      const checkedRadio = stepElem.querySelector('input[name="call_timing"]:checked');
+      if (!checkedRadio) {
+        triggerStepError(stepElem);
+        showAlert('Veuillez choisir le meilleur moment pour échanger.');
+        return false;
+      }
+      return true;
+    }
+
+    if (stepNumber === 6) {
       const fullName = document.getElementById('fullName');
       const phone = document.getElementById('phone');
       const email = document.getElementById('email');
@@ -172,6 +261,7 @@ function initMultiStepForm() {
 
       if (!fullName || !fullName.value.trim()) {
         triggerStepError(stepElem);
+        showAlert('Veuillez saisir le nom du propriétaire ou du décideur.');
         if (fullName) fullName.focus();
         return false;
       }
@@ -183,26 +273,28 @@ function initMultiStepForm() {
       const cleanPhone = phone.value.replace(/[^0-9+]/g, '');
       if (cleanPhone.length < 9) {
         triggerStepError(stepElem);
-        alert('Veuillez saisir un numéro de téléphone valide (ex: 06 12 34 56 78).');
+        showAlert('Veuillez saisir un numéro de téléphone valide (ex: 06 12 34 56 78).');
         phone.focus();
         return false;
       }
 
       if (!email || !email.value.trim()) {
         triggerStepError(stepElem);
+        showAlert('Veuillez saisir votre adresse email.');
         if (email) email.focus();
         return false;
       }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email.value.trim())) {
         triggerStepError(stepElem);
-        alert('Veuillez saisir une adresse email valide.');
+        showAlert('Veuillez saisir une adresse email valide.');
         email.focus();
         return false;
       }
 
       if (!city || !city.value) {
         triggerStepError(stepElem);
+        showAlert('Veuillez sélectionner votre ville.');
         if (city) city.focus();
         return false;
       }
@@ -211,6 +303,7 @@ function initMultiStepForm() {
         const customCity = cityAutreInput ? cityAutreInput.value.trim() : '';
         if (!customCity) {
           triggerStepError(stepElem);
+          showAlert('Veuillez préciser le nom de votre ville.');
           if (cityAutreInput) cityAutreInput.focus();
           return false;
         }
@@ -223,51 +316,7 @@ function initMultiStepForm() {
   }
 
   /**
-   * Question 1: Handling "Autre" reveal
-   */
-  centerTypeRadios.forEach((radio) => {
-    radio.addEventListener('change', () => {
-      if (radio.value === 'Autre') {
-        if (centerTypeAutreWrap) {
-          centerTypeAutreWrap.style.display = 'block';
-          if (centerTypeAutreInput) centerTypeAutreInput.focus();
-        }
-      } else {
-        if (centerTypeAutreWrap) {
-          centerTypeAutreWrap.style.display = 'none';
-        }
-        // Auto-advance to step 2 after brief delay
-        setTimeout(() => {
-          if (currentStep === 1) {
-            goToStep(2);
-          }
-        }, 260);
-      }
-    });
-  });
-
-  /**
-   * Questions 2, 3, 4: Auto-advance on radio selection
-   */
-  const radioGroups = [
-    { name: 'active_duration', nextStep: 3 },
-    { name: 'students_per_month', nextStep: 4 },
-    { name: 'ad_experience', nextStep: 5 }
-  ];
-
-  radioGroups.forEach((group) => {
-    const radios = document.querySelectorAll(`input[name="${group.name}"]`);
-    radios.forEach((radio) => {
-      radio.addEventListener('change', () => {
-        setTimeout(() => {
-          goToStep(group.nextStep);
-        }, 260);
-      });
-    });
-  });
-
-  /**
-   * Question 5: City select "Autre" reveal
+   * Question 6: City select "Autre" reveal
    */
   if (citySelect) {
     citySelect.addEventListener('change', () => {
@@ -283,6 +332,52 @@ function initMultiStepForm() {
       }
     });
   }
+
+  /**
+   * Question 1: Handling "Autre" reveal & auto-advance
+   */
+  centerTypeRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      updateCardSelectionState(radio);
+      if (radio.value === 'Autre') {
+        if (centerTypeAutreWrap) {
+          centerTypeAutreWrap.style.display = 'block';
+          if (centerTypeAutreInput) centerTypeAutreInput.focus();
+        }
+      } else {
+        if (centerTypeAutreWrap) {
+          centerTypeAutreWrap.style.display = 'none';
+        }
+        setTimeout(() => {
+          if (currentStep === 1) {
+            goToStep(2);
+          }
+        }, 260);
+      }
+    });
+  });
+
+  /**
+   * Questions 2, 3, 4, 5: Auto-advance on radio selection
+   */
+  const radioGroups = [
+    { name: 'active_duration', nextStep: 3 },
+    { name: 'students_per_month', nextStep: 4 },
+    { name: 'ad_experience', nextStep: 5 },
+    { name: 'call_timing', nextStep: 6 }
+  ];
+
+  radioGroups.forEach((group) => {
+    const radios = document.querySelectorAll(`input[name="${group.name}"]`);
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        updateCardSelectionState(radio);
+        setTimeout(() => {
+          goToStep(group.nextStep);
+        }, 260);
+      });
+    });
+  });
 
   /**
    * Navigation Buttons (Suivant / Précédent)
@@ -309,7 +404,7 @@ function initMultiStepForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    if (!validateStep(5)) {
+    if (!validateStep(6)) {
       return;
     }
 
@@ -329,17 +424,18 @@ function initMultiStepForm() {
     const adRadio = document.querySelector('input[name="ad_experience"]:checked');
     const adVal = adRadio ? adRadio.value : '';
 
+    const callTimingRadio = document.querySelector('input[name="call_timing"]:checked');
+    const callTimingVal = callTimingRadio ? callTimingRadio.value : '';
+
     const fullName = document.getElementById('fullName').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
-    const email = document.getElementById('email').value.trim();
-
-    let cityVal = citySelect.value;
+    let cityVal = citySelect ? citySelect.value : '';
     if (cityVal === 'Autre' && cityAutreInput && cityAutreInput.value.trim()) {
       cityVal = `Autre (${cityAutreInput.value.trim()})`;
     }
 
-    // Update submit button UI
+    // Update submit button UI to loading state
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
       submitBtn.disabled = true;
@@ -356,6 +452,7 @@ function initMultiStepForm() {
       activeDuration: activeDurationVal,
       studentsPerMonth: studentsVal,
       adExperience: adVal,
+      callTiming: callTimingVal,
       phone: cleanPhone,
       email: email,
       city: cityVal,
@@ -365,7 +462,7 @@ function initMultiStepForm() {
       etape: "Nouveau Lead",
       probabilite: "20%",
       meetLink: "",
-      notes: `[Email: ${email}] [Ancienneté: ${activeDurationVal}] [Élèves/mois: ${studentsVal}] [Publicité: ${adVal}]`
+      notes: `[Email: ${email}] [Ancienneté: ${activeDurationVal}] [Élèves/mois: ${studentsVal}] [Publicité: ${adVal}] [Créneau: ${callTimingVal}]`
     };
 
     // Store in localStorage & sessionStorage for Thank-You page display
@@ -379,7 +476,7 @@ function initMultiStepForm() {
       console.warn('Storage error:', storageErr);
     }
 
-    // Post to Google Apps Script with 800ms safety timeout fallback
+    // Post to Google Apps Script with 900ms safety timeout fallback
     const fetchPromise = fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
@@ -387,7 +484,7 @@ function initMultiStepForm() {
       body: JSON.stringify(payload)
     });
 
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 800));
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 900));
 
     try {
       await Promise.race([fetchPromise, timeoutPromise]);
